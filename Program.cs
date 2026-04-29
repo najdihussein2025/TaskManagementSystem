@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Data;
+using TaskManagementSystem.Interfaces.Repositories;
+using TaskManagementSystem.Interfaces.Services;
+using TaskManagementSystem.Repositories;
+using TaskManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // MVC
 builder.Services.AddControllersWithViews();
+
+// DI
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

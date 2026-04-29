@@ -1,3 +1,4 @@
+@model List<TaskManagementSystem.DTOs.User.UserDto>
 @{
     Layout = null;
     ViewData["Title"] = "Manage Users";
@@ -20,7 +21,7 @@
                 <div class="sidebar-divider"></div>
                 <nav class="side-nav" id="sideNav">
                     <a href="/Admin/Dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Dashboard</span></a>
-                    <a href="/Admin/Users" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">12</span></a>
+                    <a href="/Admin/Users" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">@Model.Count</span></a>
                     <a href="/Admin/Tasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">48</span></a>
                     <a href="/Admin/Categories" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Categories</span></a>
                     <a href="/Admin/Reports" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sidebar-text">Reports</span></a>
@@ -55,16 +56,43 @@
                         <table id="usersTable">
                             <thead><tr><th>Avatar+Name</th><th>Email</th><th>Role</th><th>Tasks</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
                             <tbody>
-                                <tr data-name="John Doe" data-email="john@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c1">JD</span>John Doe</span></td><td>john@email.com</td><td><span class="role-badge user">User</span></td><td>5</td><td><span class="pill active">Active</span></td><td>Jan 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Sara Miller" data-email="sara@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c2">SM</span>Sara Miller</span></td><td>sara@email.com</td><td><span class="role-badge user">User</span></td><td>12</td><td><span class="pill active">Active</span></td><td>Feb 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Rami Khalil" data-email="rami@email.com" data-role="Admin" data-status="Inactive"><td><span class="row-user"><span class="tiny-avatar c3">RK</span>Rami Khalil</span></td><td>rami@email.com</td><td><span class="role-badge admin">Admin</span></td><td>3</td><td><span class="pill inactive">Inactive</span></td><td>Jan 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Lara Bou" data-email="lara@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c4">LB</span>Lara Bou</span></td><td>lara@email.com</td><td><span class="role-badge user">User</span></td><td>7</td><td><span class="pill active">Active</span></td><td>Mar 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Mark Nader" data-email="mark@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c5">MN</span>Mark Nader</span></td><td>mark@email.com</td><td><span class="role-badge user">User</span></td><td>9</td><td><span class="pill active">Active</span></td><td>Mar 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Nour Saad" data-email="nour@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c6">NS</span>Nour Saad</span></td><td>nour@email.com</td><td><span class="role-badge user">User</span></td><td>2</td><td><span class="pill active">Active</span></td><td>Apr 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Karim Aziz" data-email="karim@email.com" data-role="Admin" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c7">KA</span>Karim Aziz</span></td><td>karim@email.com</td><td><span class="role-badge admin">Admin</span></td><td>15</td><td><span class="pill active">Active</span></td><td>Jan 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Dana Haddad" data-email="dana@email.com" data-role="User" data-status="Inactive"><td><span class="row-user"><span class="tiny-avatar c8">DH</span>Dana Haddad</span></td><td>dana@email.com</td><td><span class="role-badge user">User</span></td><td>0</td><td><span class="pill inactive">Inactive</span></td><td>Apr 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Elie Gemayel" data-email="elie@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c9">EG</span>Elie Gemayel</span></td><td>elie@email.com</td><td><span class="role-badge user">User</span></td><td>4</td><td><span class="pill active">Active</span></td><td>Feb 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-                                <tr data-name="Maya Azar" data-email="maya@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c10">MA</span>Maya Azar</span></td><td>maya@email.com</td><td><span class="role-badge user">User</span></td><td>6</td><td><span class="pill active">Active</span></td><td>Mar 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                @if (!Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="7" style="text-align:center; color: var(--text-muted);">No users found.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var user in Model)
+                                    {
+                                        var name = string.IsNullOrWhiteSpace(user.FullName) ? "Unknown User" : user.FullName;
+                                        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                        var initials = parts.Length switch
+                                        {
+                                            0 => "U",
+                                            1 => parts[0][0].ToString().ToUpper(),
+                                            _ => $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[^1][0])}"
+                                        };
+                                        var roleName = string.IsNullOrWhiteSpace(user.RoleName) ? "User" : user.RoleName;
+                                        var roleClass = roleName.Equals("Admin", StringComparison.OrdinalIgnoreCase) ? "admin" : "user";
+                                        var statusClass = user.IsActive ? "active" : "inactive";
+                                        var statusText = user.IsActive ? "Active" : "Inactive";
+                                        <tr data-name="@name" data-email="@user.Email" data-role="@roleName" data-status="@statusText">
+                                            <td><span class="row-user"><span class="tiny-avatar c1">@initials</span>@name</span></td>
+                                            <td>@user.Email</td>
+                                            <td><span class="role-badge @roleClass">@roleName</span></td>
+                                            <td>-</td>
+                                            <td><span class="pill @statusClass">@statusText</span></td>
+                                            <td>-</td>
+                                            <td>
+                                                <button class="action-btn edit-user">Edit</button>
+                                                <button class="action-btn delete-user">Delete</button>
+                                                <div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -77,12 +105,12 @@
     <div class="modal-overlay" id="userModalOverlay">
         <div class="modal-card">
             <h3 id="userModalTitle">Add New User</h3>
-            <form id="userForm">
-                <label>Full Name<input id="userName" type="text" /></label>
-                <label>Email<input id="userEmail" type="email" /></label>
-                <label class="password-only">Password<input id="userPassword" type="password" /></label>
-                <label>Role<select id="userRole"><option>User</option><option>Admin</option></select></label>
-                <label>Status<select id="userStatus"><option>Active</option><option>Inactive</option></select></label>
+            <form id="userForm" method="post" action="/Admin/CreateUser">
+                <label>Full Name<input id="userName" name="FullName" type="text" /></label>
+                <label>Email<input id="userEmail" name="Email" type="email" /></label>
+                <label class="password-only">Password<input id="userPassword" name="Password" type="password" /></label>
+                <label>Role<select id="userRole" name="RoleName"><option>User</option><option>Admin</option></select></label>
+                <label>Status<select id="userStatus" name="Status"><option>Active</option><option>Inactive</option></select></label>
                 <div class="modal-actions"><button type="button" class="ghost-btn" id="cancelUserModal">Cancel</button><button type="submit" class="btn-primary">Save User</button></div>
             </form>
         </div>
