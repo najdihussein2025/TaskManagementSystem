@@ -1,0 +1,127 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<main class="home-page">
+    <header class="navbar" id="mainNavbar">
+        <div class="container nav-inner">
+            <a href="/" class="brand" aria-label="TaskFlow home">
+                <span class="brand-icon">✓</span>
+                <span class="brand-text">TaskFlow</span>
+            </a>
+            <nav class="nav-actions">
+                <a href="/Auth/Login" class="btn btn-outline">Login</a>
+                <a href="/Auth/Register" class="btn btn-primary">Register</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero section" id="top">
+        <div class="container hero-grid">
+            <div class="hero-copy">
+                <h1 class="hero-title">
+                    <span>Manage Tasks.</span>
+                    <span class="gradient-text">Stay in Control.</span>
+                </h1>
+                <p class="hero-subtext">
+                    A powerful task management platform for teams and individuals. Organize, assign, and track tasks with ease.
+                </p>
+                <div class="hero-cta">
+                    <a href="/Auth/Register" class="btn btn-primary">Get Started &rarr;</a>
+                    <a href="#features" class="btn btn-outline">Learn More</a>
+                </div>
+            </div>
+
+            <aside class="task-mockup" aria-label="Task list preview">
+                <div class="mockup-header">
+                    <span>Today&rsquo;s Tasks</span>
+                    <span class="dot"></span>
+                </div>
+                <div class="mockup-item">
+                    <div>
+                        <h3>Design login page</h3>
+                        <p>Due today</p>
+                    </div>
+                    <span class="badge in-progress">In Progress</span>
+                </div>
+                <div class="mockup-item">
+                    <div>
+                        <h3>API integration</h3>
+                        <p>Assigned to Dev Team</p>
+                    </div>
+                    <span class="badge done">Done</span>
+                </div>
+                <div class="mockup-item">
+                    <div>
+                        <h3>Write test cases</h3>
+                        <p>QA workflow</p>
+                    </div>
+                    <span class="badge pending">Pending</span>
+                </div>
+                <div class="mockup-item">
+                    <div>
+                        <h3>Deploy staging build</h3>
+                        <p>Release prep</p>
+                    </div>
+                    <span class="badge in-progress">In Progress</span>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="features section" id="features">
+        <div class="container">
+            <h2 class="section-title">Everything you need</h2>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">📋</span>
+                    <h3>Task Tracking</h3>
+                    <p>Create and monitor tasks with real-time status updates.</p>
+                </article>
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">👥</span>
+                    <h3>Role Management</h3>
+                    <p>Admins control assignments. Users stay focused on their work.</p>
+                </article>
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">🔒</span>
+                    <h3>Secure Access</h3>
+                    <p>JWT authentication keeps your data safe and access controlled.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works section" id="how">
+        <div class="container">
+            <h2 class="section-title">How it works</h2>
+            <div class="timeline">
+                <article class="timeline-step">
+                    <span class="step-number">1</span>
+                    <h3>Register your account</h3>
+                    <p>Sign up and create your secure workspace in seconds.</p>
+                </article>
+                <article class="timeline-step">
+                    <span class="step-number">2</span>
+                    <h3>Create &amp; assign tasks</h3>
+                    <p>Build tasks, set priorities, and delegate responsibilities.</p>
+                </article>
+                <article class="timeline-step">
+                    <span class="step-number">3</span>
+                    <h3>Track progress &amp; complete</h3>
+                    <p>Monitor statuses and close tasks with full visibility.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p>TaskFlow &copy; 2025</p>
+            <div class="footer-links">
+                <a href="/Auth/Login">Login</a>
+                <a href="/Auth/Register">Register</a>
+            </div>
+        </div>
+    </footer>
+</main>

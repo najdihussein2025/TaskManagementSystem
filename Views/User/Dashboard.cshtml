@@ -1,0 +1,153 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "My Dashboard";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/User/user-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/User/dashboard.css" asp-append-version="true" />
+</head>
+<body class="user-body">
+    <div class="user-wrapper" id="userWrapper">
+        <aside class="user-sidebar" id="userSidebar">
+            <div class="sidebar-top">
+                <a class="brand" href="/User/Dashboard">
+                    <span class="brand-icon">✓</span>
+                    <span class="brand-text sidebar-text">TaskFlow</span>
+                </a>
+                <p class="panel-label sidebar-text">My Workspace</p>
+                <div class="sidebar-divider"></div>
+                <nav class="side-nav" id="sideNav">
+                    <a href="/User/Dashboard" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8" /></svg><span class="sidebar-text">Dashboard</span></a>
+                    <a href="/User/MyTasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="sidebar-text">My Tasks</span></a>
+                    <a href="/User/CreateTask" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="sidebar-text">Create Task</span></a>
+                    <a href="/User/Profile" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8" /></svg><span class="sidebar-text">Profile</span></a>
+                    <div class="sidebar-divider"></div>
+                    <a href="/Auth/Login" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="sidebar-text">Logout</span></a>
+                </nav>
+            </div>
+            <div class="sidebar-bottom">
+                <div class="profile-card">
+                    <div class="avatar">JD</div>
+                    <div class="profile-info sidebar-text">
+                        <strong>John Doe</strong>
+                        <span>john@email.com</span>
+                    </div>
+                </div>
+            </div>
+            <button class="collapse-btn" id="collapseSidebar" type="button" aria-label="Toggle sidebar">❮</button>
+        </aside>
+
+        <section class="user-main">
+            <header class="topbar">
+                <div>
+                    <h1>My Dashboard</h1>
+                    <p id="todayDate"></p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="hamburger-btn" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button>
+                    <div class="search-wrap"><input type="text" placeholder="Search tasks..." /></div>
+                    <div class="dropdown-wrap">
+                        <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8" /></svg>
+                            <span class="dot-badge">2</span>
+                        </button>
+                        <div class="dropdown-menu" id="notifMenu">
+                            <p>Deadline reminder: Design login page.</p>
+                            <p>New update on JWT auth task.</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-wrap">
+                        <button class="avatar-btn" id="avatarBtn" type="button">JD</button>
+                        <div class="dropdown-menu profile-menu" id="profileMenu">
+                            <a href="/User/Profile">My Profile</a>
+                            <a href="/Auth/Login">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <section class="stats-grid">
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>My Tasks</span></div>
+                        <h3 data-counter="23">0</h3>
+                        <div class="progress"><span style="width:70%; background:#3b82f6;"></span></div>
+                        <small>Total assigned to you</small>
+                    </article>
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>Completed</span></div>
+                        <h3 data-counter="14">0</h3>
+                        <div class="progress"><span style="width:60%; background:#22c55e;"></span></div>
+                        <small>Tasks finished</small>
+                    </article>
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>In Progress</span></div>
+                        <h3 data-counter="6">0</h3>
+                        <div class="progress"><span style="width:35%; background:#f59e0b;"></span></div>
+                        <small>Currently working on</small>
+                    </article>
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>Overdue</span></div>
+                        <h3 data-counter="3">0</h3>
+                        <div class="progress"><span style="width:15%; background:#ef4444;"></span></div>
+                        <small>Needs your attention</small>
+                    </article>
+                </section>
+
+                <section class="content-grid">
+                    <article class="card">
+                        <h2>My Tasks by Status</h2>
+                        <div class="status-bars">
+                            <div class="bar-row"><span>Pending</span><div class="bar-track"><div class="bar-fill blue" data-width="26.1%"></div></div><strong>6</strong></div>
+                            <div class="bar-row"><span>In Progress</span><div class="bar-track"><div class="bar-fill amber" data-width="26.1%"></div></div><strong>6</strong></div>
+                            <div class="bar-row"><span>Completed</span><div class="bar-track"><div class="bar-fill green" data-width="60.9%"></div></div><strong>14</strong></div>
+                            <div class="bar-row"><span>Overdue</span><div class="bar-track"><div class="bar-fill red" data-width="13.0%"></div></div><strong>3</strong></div>
+                        </div>
+                    </article>
+
+                    <article class="card">
+                        <h2>Upcoming Deadlines</h2>
+                        <ul class="deadline-list">
+                            <li><span class="priority-dot red"></span><strong>Design login page</strong><span class="muted">Apr 30</span><span class="status in-progress">In Progress</span></li>
+                            <li><span class="priority-dot red"></span><strong>Implement JWT auth</strong><span class="muted">May 5</span><span class="status pending">Pending</span></li>
+                            <li><span class="priority-dot amber"></span><strong>Connect frontend to API</strong><span class="muted">May 8</span><span class="status pending">Pending</span></li>
+                            <li><span class="priority-dot amber"></span><strong>Task filter feature</strong><span class="muted">May 9</span><span class="status pending">Pending</span></li>
+                            <li><span class="priority-dot green"></span><strong>Style dashboard page</strong><span class="muted">May 1</span><span class="status in-progress">In Progress</span></li>
+                        </ul>
+                    </article>
+                </section>
+
+                <section class="card table-card">
+                    <div class="card-title-row">
+                        <h2>My Recent Tasks</h2>
+                        <a href="/User/MyTasks">View All &rarr;</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Task Name</th><th>Category</th><th>Priority</th><th>Due Date</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Design login page</td><td><span class="pill design">Design</span></td><td><span class="pill high">High</span></td><td>Apr 30</td><td><span class="status in-progress">In Progress</span></td></tr>
+                                <tr><td>Implement JWT auth</td><td><span class="pill backend">Backend</span></td><td><span class="pill high">High</span></td><td>May 5</td><td><span class="status pending">Pending</span></td></tr>
+                                <tr><td>Connect frontend to API</td><td><span class="pill frontend">Frontend</span></td><td><span class="pill low">Low</span></td><td>May 8</td><td><span class="status pending">Pending</span></td></tr>
+                                <tr><td>Task filter feature</td><td><span class="pill frontend">Frontend</span></td><td><span class="pill low">Low</span></td><td>May 9</td><td><span class="status pending">Pending</span></td></tr>
+                                <tr><td>Style dashboard page</td><td><span class="pill design">Design</span></td><td><span class="pill high">High</span></td><td>May 1</td><td><span class="status in-progress">In Progress</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <script src="~/js/User/user-layout.js" asp-append-version="true"></script>
+    <script src="~/js/User/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>

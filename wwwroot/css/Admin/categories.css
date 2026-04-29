@@ -1,0 +1,20 @@
+.categories-page .grid-main{display:grid;grid-template-columns:60% 40%;gap:16px}
+.categories-page h2{margin:0 0 12px;font-family:"Sora",Arial,sans-serif}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.count-badge{padding:3px 8px;border-radius:999px;background:rgba(148,163,184,.15);color:var(--text-secondary);font-size:11px}
+.confirm-delete{display:none;color:#fca5a5;font-size:11px;margin-top:4px}
+tr.deleting{background:rgba(239,68,68,.12)} tr.deleting .confirm-delete{display:block}
+.confirm-delete button{border:none;background:transparent;color:#fff;font-size:11px}
+form label{display:grid;gap:6px;color:var(--text-secondary);font-size:13px;margin-bottom:10px}
+form input,form textarea{background:#101a31;border:1px solid var(--border);color:var(--text);border-radius:10px;padding:9px 10px}
+.color-picker{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.color-picker button{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.color-picker button[data-color="#3b82f6"]{background:#3b82f6}.color-picker button[data-color="#22c55e"]{background:#22c55e}.color-picker button[data-color="#f59e0b"]{background:#f59e0b}.color-picker button[data-color="#a78bfa"]{background:#a78bfa}.color-picker button[data-color="#14b8a6"]{background:#14b8a6}.color-picker button[data-color="#ef4444"]{background:#ef4444}.color-picker button[data-color="#ec4899"]{background:#ec4899}.color-picker button[data-color="#94a3b8"]{background:#94a3b8}
+.color-picker .selected{outline:2px solid #fff}
+.btn-primary{width:100%;border:none;background:var(--accent);color:#fff;border-radius:10px;padding:10px 14px;cursor:pointer}
+.link-btn{display:none;margin-top:8px;border:none;background:transparent;color:#93c5fd;cursor:pointer}
+.editing .link-btn{display:inline-block}
+.stats-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.stats-mini h4{margin:0 0 8px;color:var(--text-muted);font-size:12px}
+.stats-mini strong{font-size:16px}
+@media(max-width:1024px){.categories-page .grid-main{grid-template-columns:1fr}.stats-mini{grid-template-columns:1fr}}

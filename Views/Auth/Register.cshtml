@@ -1,0 +1,124 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Register";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Auth/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+    <main class="auth-layout auth-layout-reverse">
+        <section class="auth-form-panel">
+            <div class="auth-form-wrap">
+                <div class="auth-card auth-card-wide">
+                    <h2>Create Account</h2>
+                    <form id="registerForm" class="auth-form" novalidate>
+                        <div class="form-group">
+                            <label for="registerName">Full Name</label>
+                            <input id="registerName" name="fullName" type="text" placeholder="John Doe" autocomplete="name" />
+                            <small class="field-error" data-error-for="registerName"></small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input id="registerEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
+                            <small class="field-error" data-error-for="registerEmail"></small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <div class="password-wrap">
+                                <input id="registerPassword" name="password" type="password" placeholder="••••••••" autocomplete="new-password" />
+                                <button class="password-toggle" type="button" data-toggle-password="registerPassword" aria-label="Show password">
+                                    <span class="eye"></span>
+                                </button>
+                            </div>
+                            <div class="password-meter" aria-live="polite">
+                                <span class="meter-bar"><span id="passwordStrengthBar"></span></span>
+                                <strong id="passwordStrengthText">Weak</strong>
+                            </div>
+                            <small class="field-error" data-error-for="registerPassword"></small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerConfirmPassword">Confirm Password</label>
+                            <div class="password-wrap">
+                                <input id="registerConfirmPassword" name="confirmPassword" type="password" placeholder="••••••••" autocomplete="new-password" />
+                                <button class="password-toggle" type="button" data-toggle-password="registerConfirmPassword" aria-label="Show password">
+                                    <span class="eye"></span>
+                                </button>
+                            </div>
+                            <small class="field-error" data-error-for="registerConfirmPassword"></small>
+                        </div>
+
+                        <div class="form-group form-check">
+                            <label class="checkbox-wrap" for="termsCheckbox">
+                                <input id="termsCheckbox" name="terms" type="checkbox" />
+                                <span>
+                                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                                </span>
+                            </label>
+                            <small class="field-error" data-error-for="termsCheckbox"></small>
+                        </div>
+
+                        <button class="submit-btn" type="submit">
+                            <span class="btn-text">Create Account &rarr;</span>
+                            <span class="spinner" aria-hidden="true"></span>
+                        </button>
+                        <p class="success-message" data-success-for="registerForm">Account created! Please sign in.</p>
+                    </form>
+                </div>
+
+                <p class="bottom-link">
+                    Already have an account?
+                    <a href="/Auth/Login">Sign in &rarr;</a>
+                </p>
+            </div>
+        </section>
+
+        <section class="auth-info auth-info-right">
+            <div class="auth-info-inner align-right">
+                <a href="/" class="brand brand-right" aria-label="TaskFlow home">
+                    <span class="brand-icon">✓</span>
+                    <span class="brand-text">TaskFlow</span>
+                </a>
+                <div class="info-content">
+                    <h1>Join TaskFlow</h1>
+                    <p>Start managing your tasks smarter</p>
+                    <div class="step-indicator">
+                        <div class="step-item active">
+                            <span>1</span>
+                            <div>
+                                <h3>Create Account</h3>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <span>2</span>
+                            <div>
+                                <h3>Set Up Profile</h3>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <span>3</span>
+                            <div>
+                                <h3>Start Tasking</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="switch-auth">
+                    Already have an account?
+                    <a href="/Auth/Login">Sign in &rarr;</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/js/Auth/auth.js" asp-append-version="true"></script>
+</body>
+</html>

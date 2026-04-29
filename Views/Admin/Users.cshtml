@@ -1,0 +1,94 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Manage Users";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/users.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <div class="admin-wrapper" id="adminWrapper">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-top">
+                <div class="logo-wrap"><a class="brand" href="/"><span class="brand-icon">✓</span><span class="brand-text sidebar-text">TaskFlow</span></a><p class="panel-label sidebar-text">Admin Panel</p></div>
+                <div class="sidebar-divider"></div>
+                <nav class="side-nav" id="sideNav">
+                    <a href="/Admin/Dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Dashboard</span></a>
+                    <a href="/Admin/Users" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">12</span></a>
+                    <a href="/Admin/Tasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">48</span></a>
+                    <a href="/Admin/Categories" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Categories</span></a>
+                    <a href="/Admin/Reports" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sidebar-text">Reports</span></a>
+                    <div class="sidebar-divider nav-divider"></div>
+                    <a href="/Admin/Settings" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4-.9-.3a7.9 7.9 0 0 0-.5-1.3l.5-.8-1.4-1.4-.8.5a7.9 7.9 0 0 0-1.3-.5L15 4h-2l-.3.9a7.9 7.9 0 0 0-1.3.5l-.8-.5-1.4 1.4.5.8a7.9 7.9 0 0 0-.5 1.3L4 10v2l.9.3c.1.5.3.9.5 1.3l-.5.8 1.4 1.4.8-.5c.4.2.8.4 1.3.5L10 20h2l.3-.9c.5-.1.9-.3 1.3-.5l.8.5 1.4-1.4-.5-.8c.2-.4.4-.8.5-1.3l.9-.3v-2Z" stroke="currentColor" stroke-width="1.5"/></svg><span class="sidebar-text">Settings</span></a>
+                </nav>
+            </div>
+            <div class="sidebar-bottom"><div class="profile-card"><div class="avatar">A</div><div class="profile-info sidebar-text"><strong>Admin User</strong><span>admin@taskflow.com</span></div><a class="logout-btn" href="/Auth/Login"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8"/></svg></a></div></div>
+            <button class="collapse-btn" id="collapseSidebar" type="button" aria-label="Toggle sidebar">❮</button>
+        </aside>
+        <section class="admin-main">
+            <header class="topbar">
+                <div><h1>Manage Users</h1><p id="todayDate"></p></div>
+                <div class="topbar-actions"><button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button><div class="search-wrap"><input type="text" placeholder="Search users..." /></div><div class="dropdown-wrap"><button class="icon-btn" id="notifBtn" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="dot-badge">3</span></button><div class="dropdown-menu" id="notifMenu"><p>User request received.</p><p>New user signed up.</p><p>Backup completed.</p></div></div><div class="dropdown-wrap"><button class="avatar-btn" id="avatarBtn" type="button">A</button><div class="dropdown-menu profile-menu" id="profileMenu"><a href="#">My Profile</a><a href="/Auth/Login">Logout</a></div></div></div>
+            </header>
+
+            <div class="page-content users-page">
+                <section class="page-head">
+                    <div><h2>Manage Users</h2><p>Manage all registered users</p></div>
+                    <button class="btn-primary action-main" id="openAddUser">+ Add User</button>
+                </section>
+
+                <section class="card filter-card">
+                    <input id="userSearch" type="text" placeholder="Search by name or email..." />
+                    <select id="roleFilter"><option>All Roles</option><option>Admin</option><option>User</option></select>
+                    <select id="statusFilter"><option>All Status</option><option>Active</option><option>Inactive</option></select>
+                    <button class="btn-primary" id="applyFilters">Apply Filters</button>
+                </section>
+
+                <section class="card table-card">
+                    <div class="table-wrap">
+                        <table id="usersTable">
+                            <thead><tr><th>Avatar+Name</th><th>Email</th><th>Role</th><th>Tasks</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+                            <tbody>
+                                <tr data-name="John Doe" data-email="john@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c1">JD</span>John Doe</span></td><td>john@email.com</td><td><span class="role-badge user">User</span></td><td>5</td><td><span class="pill active">Active</span></td><td>Jan 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Sara Miller" data-email="sara@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c2">SM</span>Sara Miller</span></td><td>sara@email.com</td><td><span class="role-badge user">User</span></td><td>12</td><td><span class="pill active">Active</span></td><td>Feb 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Rami Khalil" data-email="rami@email.com" data-role="Admin" data-status="Inactive"><td><span class="row-user"><span class="tiny-avatar c3">RK</span>Rami Khalil</span></td><td>rami@email.com</td><td><span class="role-badge admin">Admin</span></td><td>3</td><td><span class="pill inactive">Inactive</span></td><td>Jan 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Lara Bou" data-email="lara@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c4">LB</span>Lara Bou</span></td><td>lara@email.com</td><td><span class="role-badge user">User</span></td><td>7</td><td><span class="pill active">Active</span></td><td>Mar 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Mark Nader" data-email="mark@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c5">MN</span>Mark Nader</span></td><td>mark@email.com</td><td><span class="role-badge user">User</span></td><td>9</td><td><span class="pill active">Active</span></td><td>Mar 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Nour Saad" data-email="nour@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c6">NS</span>Nour Saad</span></td><td>nour@email.com</td><td><span class="role-badge user">User</span></td><td>2</td><td><span class="pill active">Active</span></td><td>Apr 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Karim Aziz" data-email="karim@email.com" data-role="Admin" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c7">KA</span>Karim Aziz</span></td><td>karim@email.com</td><td><span class="role-badge admin">Admin</span></td><td>15</td><td><span class="pill active">Active</span></td><td>Jan 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Dana Haddad" data-email="dana@email.com" data-role="User" data-status="Inactive"><td><span class="row-user"><span class="tiny-avatar c8">DH</span>Dana Haddad</span></td><td>dana@email.com</td><td><span class="role-badge user">User</span></td><td>0</td><td><span class="pill inactive">Inactive</span></td><td>Apr 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Elie Gemayel" data-email="elie@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c9">EG</span>Elie Gemayel</span></td><td>elie@email.com</td><td><span class="role-badge user">User</span></td><td>4</td><td><span class="pill active">Active</span></td><td>Feb 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                                <tr data-name="Maya Azar" data-email="maya@email.com" data-role="User" data-status="Active"><td><span class="row-user"><span class="tiny-avatar c10">MA</span>Maya Azar</span></td><td>maya@email.com</td><td><span class="role-badge user">User</span></td><td>6</td><td><span class="pill active">Active</span></td><td>Mar 2025</td><td><button class="action-btn edit-user">Edit</button><button class="action-btn delete-user">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination"><button>Previous</button><button class="active">1</button><button>2</button><button>3</button><button>Next</button></div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="userModalOverlay">
+        <div class="modal-card">
+            <h3 id="userModalTitle">Add New User</h3>
+            <form id="userForm">
+                <label>Full Name<input id="userName" type="text" /></label>
+                <label>Email<input id="userEmail" type="email" /></label>
+                <label class="password-only">Password<input id="userPassword" type="password" /></label>
+                <label>Role<select id="userRole"><option>User</option><option>Admin</option></select></label>
+                <label>Status<select id="userStatus"><option>Active</option><option>Inactive</option></select></label>
+                <div class="modal-actions"><button type="button" class="ghost-btn" id="cancelUserModal">Cancel</button><button type="submit" class="btn-primary">Save User</button></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/js/Admin/admin.js" asp-append-version="true"></script>
+    <script src="~/js/Admin/users.js" asp-append-version="true"></script>
+</body>
+</html>

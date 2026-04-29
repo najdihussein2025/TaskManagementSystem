@@ -1,0 +1,187 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Admin Dashboard";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/admin.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <div class="admin-wrapper" id="adminWrapper">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-top">
+                <div class="logo-wrap">
+                    <a class="brand" href="/">
+                        <span class="brand-icon">✓</span>
+                        <span class="brand-text sidebar-text">TaskFlow</span>
+                    </a>
+                    <p class="panel-label sidebar-text">Admin Panel</p>
+                </div>
+                <div class="sidebar-divider"></div>
+
+                <nav class="side-nav" id="sideNav">
+                    <a href="/Admin/Dashboard" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg>
+                        <span class="sidebar-text">Dashboard</span>
+                    </a>
+                    <a href="/Admin/Users" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg>
+                        <span class="sidebar-text">Manage Users</span>
+                        <span class="nav-badge">12</span>
+                    </a>
+                    <a href="/Admin/Tasks" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <span class="sidebar-text">Manage Tasks</span>
+                        <span class="nav-badge success">48</span>
+                    </a>
+                    <a href="/Admin/Categories" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg>
+                        <span class="sidebar-text">Categories</span>
+                    </a>
+                    <a href="/Admin/Reports" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="sidebar-text">Reports</span>
+                    </a>
+                    <div class="sidebar-divider nav-divider"></div>
+                    <a href="/Admin/Settings" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4-.9-.3a7.9 7.9 0 0 0-.5-1.3l.5-.8-1.4-1.4-.8.5a7.9 7.9 0 0 0-1.3-.5L15 4h-2l-.3.9a7.9 7.9 0 0 0-1.3.5l-.8-.5-1.4 1.4.5.8a7.9 7.9 0 0 0-.5 1.3L4 10v2l.9.3c.1.5.3.9.5 1.3l-.5.8 1.4 1.4.8-.5c.4.2.8.4 1.3.5L10 20h2l.3-.9c.5-.1.9-.3 1.3-.5l.8.5 1.4-1.4-.5-.8c.2-.4.4-.8.5-1.3l.9-.3v-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+                        <span class="sidebar-text">Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="profile-card">
+                    <div class="avatar">A</div>
+                    <div class="profile-info sidebar-text">
+                        <strong>Admin User</strong>
+                        <span>admin@taskflow.com</span>
+                    </div>
+                    <a class="logout-btn" href="/Auth/Login" title="Logout">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </div>
+            </div>
+            <button class="collapse-btn" id="collapseSidebar" type="button" aria-label="Toggle sidebar">❮</button>
+        </aside>
+
+        <section class="admin-main">
+            <header class="topbar">
+                <div>
+                    <h1>Dashboard Overview</h1>
+                    <p id="todayDate"></p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="hamburger-btn" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button>
+                    <div class="search-wrap">
+                        <input type="text" placeholder="Search tasks..." />
+                    </div>
+                    <div class="dropdown-wrap">
+                        <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8"/></svg>
+                            <span class="dot-badge">3</span>
+                        </button>
+                        <div class="dropdown-menu" id="notifMenu">
+                            <p>John Doe completed "Design login page".</p>
+                            <p>New user registered: Sara Miller.</p>
+                            <p>Task "Write API documentation" is overdue.</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-wrap">
+                        <button class="avatar-btn" id="avatarBtn" type="button">A</button>
+                        <div class="dropdown-menu profile-menu" id="profileMenu">
+                            <a href="#">My Profile</a>
+                            <a href="/Auth/Login">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <section class="stats-grid">
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>Total Users</span><span class="trend success">+3 new</span></div>
+                        <h3 data-counter="24">0</h3>
+                        <div class="progress"><span style="width:70%; background:#3b82f6;"></span></div>
+                        <small>Monthly growth</small>
+                    </article>
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>Total Tasks</span><span class="trend success">+12</span></div>
+                        <h3 data-counter="148">0</h3>
+                        <div class="progress"><span style="width:85%; background:#22c55e;"></span></div>
+                        <small>Tracked this month</small>
+                    </article>
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>In Progress</span><span class="trend warning">active</span></div>
+                        <h3 data-counter="37">0</h3>
+                        <div class="progress"><span style="width:45%; background:#f59e0b;"></span></div>
+                        <small>Open workflow items</small>
+                    </article>
+                    <article class="card stat-card">
+                        <div class="stat-top"><span>Overdue</span><span class="trend danger">urgent</span></div>
+                        <h3 data-counter="8">0</h3>
+                        <div class="progress"><span style="width:20%; background:#ef4444;"></span></div>
+                        <small>Needs immediate attention</small>
+                    </article>
+                </section>
+
+                <section class="content-grid">
+                    <article class="card">
+                        <h2>Tasks by Status</h2>
+                        <div class="status-bars">
+                            <div class="bar-row"><span>Pending</span><div class="bar-track"><div class="bar-fill blue" data-width="41.9%"></div></div><strong>62</strong></div>
+                            <div class="bar-row"><span>In Progress</span><div class="bar-track"><div class="bar-fill amber" data-width="25.0%"></div></div><strong>37</strong></div>
+                            <div class="bar-row"><span>Completed</span><div class="bar-track"><div class="bar-fill green" data-width="27.7%"></div></div><strong>41</strong></div>
+                            <div class="bar-row"><span>Overdue</span><div class="bar-track"><div class="bar-fill red" data-width="5.4%"></div></div><strong>8</strong></div>
+                        </div>
+                    </article>
+
+                    <article class="card">
+                        <div class="card-title-row">
+                            <h2>Recent Users</h2>
+                            <a href="/Admin/Users">View all &rarr;</a>
+                        </div>
+                        <ul class="user-list">
+                            <li><span class="user-avatar purple">JD</span><div><strong>John Doe</strong><p>User, 5 tasks</p></div><span class="pill active">Active</span></li>
+                            <li><span class="user-avatar teal">SM</span><div><strong>Sara Miller</strong><p>User, 12 tasks</p></div><span class="pill active">Active</span></li>
+                            <li><span class="user-avatar amber">RK</span><div><strong>Rami Khalil</strong><p>Admin, 3 tasks</p></div><span class="pill inactive">Inactive</span></li>
+                            <li><span class="user-avatar gray">LB</span><div><strong>Lara Bou</strong><p>User, 7 tasks</p></div><span class="pill active">Active</span></li>
+                            <li><span class="user-avatar blue">MN</span><div><strong>Mark Nader</strong><p>User, 9 tasks</p></div><span class="pill active">Active</span></li>
+                        </ul>
+                    </article>
+                </section>
+
+                <section class="card table-card">
+                    <div class="card-title-row">
+                        <h2>Recent Tasks</h2>
+                        <a href="/Admin/Tasks">View all &rarr;</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Task Name</th><th>Assigned To</th><th>Category</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Design login page</td><td>John Doe</td><td>Design</td><td>Apr 30</td><td class="priority-high">High</td><td><span class="status in-progress">In Progress</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
+                                <tr><td>Setup EF Core models</td><td>Sara Miller</td><td>Backend</td><td>May 2</td><td class="priority-high">High</td><td><span class="status completed">Completed</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
+                                <tr><td>Write API documentation</td><td>Rami Khalil</td><td>Docs</td><td>Apr 28</td><td class="priority-medium">Medium</td><td><span class="status overdue">Overdue</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
+                                <tr><td>Implement JWT auth</td><td>Lara Bou</td><td>Backend</td><td>May 5</td><td class="priority-high">High</td><td><span class="status pending">Pending</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
+                                <tr><td>Connect frontend to API</td><td>John Doe</td><td>Frontend</td><td>May 8</td><td class="priority-low">Low</td><td><span class="status pending">Pending</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <script src="~/js/Admin/admin.js" asp-append-version="true"></script>
+</body>
+</html>

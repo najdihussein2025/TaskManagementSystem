@@ -1,0 +1,109 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Create Task";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/User/user-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/User/createtask.css" asp-append-version="true" />
+</head>
+<body class="user-body">
+    <div class="user-wrapper" id="userWrapper">
+        <aside class="user-sidebar" id="userSidebar">
+            <div class="sidebar-top">
+                <a class="brand" href="/User/Dashboard"><span class="brand-icon">✓</span><span class="brand-text sidebar-text">TaskFlow</span></a>
+                <p class="panel-label sidebar-text">My Workspace</p>
+                <div class="sidebar-divider"></div>
+                <nav class="side-nav" id="sideNav">
+                    <a href="/User/Dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8" /></svg><span class="sidebar-text">Dashboard</span></a>
+                    <a href="/User/MyTasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="sidebar-text">My Tasks</span></a>
+                    <a href="/User/CreateTask" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="sidebar-text">Create Task</span></a>
+                    <a href="/User/Profile" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8" /></svg><span class="sidebar-text">Profile</span></a>
+                    <div class="sidebar-divider"></div>
+                    <a href="/Auth/Login" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="sidebar-text">Logout</span></a>
+                </nav>
+            </div>
+            <div class="sidebar-bottom"><div class="profile-card"><div class="avatar">JD</div><div class="profile-info sidebar-text"><strong>John Doe</strong><span>john@email.com</span></div></div></div>
+            <button class="collapse-btn" id="collapseSidebar" type="button" aria-label="Toggle sidebar">❮</button>
+        </aside>
+
+        <section class="user-main">
+            <header class="topbar">
+                <div><h1>Create Task</h1><p id="todayDate"></p></div>
+                <div class="topbar-actions">
+                    <button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button>
+                    <div class="search-wrap"><input type="text" placeholder="Search tasks..." /></div>
+                    <div class="dropdown-wrap"><button class="icon-btn" id="notifBtn" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8" /></svg><span class="dot-badge">2</span></button><div class="dropdown-menu" id="notifMenu"><p>You have 2 pending updates.</p><p>Task summary refreshed.</p></div></div>
+                    <div class="dropdown-wrap"><button class="avatar-btn" id="avatarBtn" type="button">JD</button><div class="dropdown-menu profile-menu" id="profileMenu"><a href="/User/Profile">My Profile</a><a href="/Auth/Login">Logout</a></div></div>
+                </div>
+            </header>
+
+            <div class="page-content create-page">
+                <section class="create-grid">
+                    <article class="card">
+                        <h2>New Task Details</h2>
+                        <form class="task-form">
+                            <label>Task Title *<input type="text" placeholder="Enter a clear task title..." /></label>
+                            <label>Description<textarea id="taskDescription" rows="5" maxlength="500" placeholder="Describe what needs to be done..."></textarea></label>
+                            <p class="char-counter" id="charCounter">0 / 500</p>
+                            <div class="form-grid">
+                                <label>Category<select><option>Design</option><option>Backend</option><option>Frontend</option><option>Docs</option><option>DevOps</option><option>Testing</option><option>General</option></select></label>
+                                <label>Priority<select><option>High</option><option selected>Medium</option><option>Low</option></select></label>
+                            </div>
+                            <label>Due Date *<input type="date" /></label>
+                            <label>Initial Status<select><option selected>Pending</option><option>In Progress</option></select></label>
+                            <p class="helper-text">You can update the status at any time from My Tasks</p>
+                            <div class="upload-zone">
+                                <strong>Attachments (optional)</strong>
+                                <p>Drag &amp; drop files here or click to browse</p>
+                                <span>Max file size: 10MB. Supported: PDF, PNG, JPG, DOCX</span>
+                            </div>
+                            <div class="form-actions">
+                                <a class="btn-ghost" href="/User/MyTasks">Cancel</a>
+                                <button class="btn-primary" type="submit">Create Task</button>
+                            </div>
+                        </form>
+                    </article>
+
+                    <div class="side-stack">
+                        <article class="card">
+                            <h3>Tips for a Good Task</h3>
+                            <ul class="tip-list">
+                                <li><span class="dot blue"></span>Use a clear, action-oriented title</li>
+                                <li><span class="dot blue"></span>Set a realistic due date</li>
+                                <li><span class="dot blue"></span>Choose the right priority level</li>
+                                <li><span class="dot blue"></span>Add enough description for context</li>
+                            </ul>
+                        </article>
+                        <article class="card">
+                            <h3>Priority Guide</h3>
+                            <ul class="guide-list">
+                                <li><span class="dot red"></span><strong>High</strong><span>Urgent, must be done ASAP</span></li>
+                                <li><span class="dot amber"></span><strong>Medium</strong><span>Important but not critical</span></li>
+                                <li><span class="dot gray"></span><strong>Low</strong><span>Nice to have, low urgency</span></li>
+                            </ul>
+                        </article>
+                        <article class="card">
+                            <h3>Your Task Summary</h3>
+                            <div class="summary-rows">
+                                <p><span>My Total Tasks:</span><strong>23</strong></p>
+                                <p><span>Completed:</span><strong>14</strong></p>
+                                <p><span>Remaining:</span><strong>9</strong></p>
+                            </div>
+                            <small>Stats update after submission</small>
+                        </article>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <script src="~/js/User/user-layout.js" asp-append-version="true"></script>
+    <script src="~/js/User/createtask.js" asp-append-version="true"></script>
+</body>
+</html>
