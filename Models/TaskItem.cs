@@ -25,7 +25,6 @@ namespace TaskManagementSystem.Models
 
         public int AssignedToUserId { get; set; }
 
-
         public Category Category { get; set; }
 
         public ApplicationUser CreatedByUser { get; set; }

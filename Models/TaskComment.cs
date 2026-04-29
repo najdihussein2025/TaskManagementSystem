@@ -13,7 +13,6 @@ namespace TaskManagementSystem.Models
         public int TaskId { get; set; }
 
         public int UserId { get; set; }
-
         public TaskItem Task { get; set; }
 
         public ApplicationUser User { get; set; }

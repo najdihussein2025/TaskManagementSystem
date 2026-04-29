@@ -19,7 +19,6 @@ namespace TaskManagementSystem.Models
 
         public int RoleId { get; set; }
 
-
         public Role Role { get; set; }
 
         public ICollection<TaskItem> CreatedTasks { get; set; }= new List<TaskItem>();
