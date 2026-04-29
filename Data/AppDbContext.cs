@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 
 namespace TaskManagementSystem.Data
