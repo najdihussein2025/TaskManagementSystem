@@ -2,6 +2,7 @@ using TaskManagementSystem.Interfaces.Services;
 using TaskManagementSystem.Interfaces.Repositories;
 using TaskManagementSystem.Models;
 using TaskManagementSystem.DTOs.User;
+using TaskManagementSystem.Enums;
 
 namespace TaskManagementSystem.Services
 {
@@ -30,7 +31,7 @@ namespace TaskManagementSystem.Services
                 FullName = dto.FullName ?? string.Empty,
                 Email = dto.Email ?? string.Empty,
                 PasswordHash = dto.Password ?? string.Empty,
-                IsActive = (dto.Status ?? "Active") == "Active",
+                Status = dto.Status,
                 CreatedAt = DateTime.UtcNow,
                 RoleId = role.Id
             };
@@ -38,17 +39,39 @@ namespace TaskManagementSystem.Services
             await _userRepository.AddAsync(user);
         }
 
-        public async Task<List<UserDto>> GetAllAsync()
+        public async Task<List<UserDto>> GetAllAsync(string? search = null, string? status = null)
         {
-            var users = await _userRepository.GetAllAsync();
-            return users.Select(user => new UserDto
+            List<ApplicationUser> users;
+
+            if (Enum.TryParse<UserStatus>(status, true, out var parsedStatus))
             {
-                Id = user.Id,
-                FullName = user.FullName,
-                Email = user.Email,
-                RoleName = user.Role?.Name,
-                IsActive = user.IsActive
-            }).ToList();
+                users = await _userRepository.GetByStatusAsync(parsedStatus);
+            }
+            else
+            {
+                users = await _userRepository.GetAllAsync();
+            }
+
+            var query = users.Where(user => !string.Equals(user.Role?.Name, "Admin", StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                query = query.Where(user =>
+                    user.FullName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    user.Email.Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return query.Select(user => new UserDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    RoleName = user.Role?.Name,
+                    IsActive = user.Status == UserStatus.Active,
+                    CreatedAt = user.CreatedAt
+                })
+                .ToList();
         }
 
         public async Task<UserProfileDto?> GetByIdAsync(int id)
@@ -73,6 +96,7 @@ namespace TaskManagementSystem.Services
 
             user.FullName = dto.FullName ?? user.FullName;
             user.Email = dto.Email ?? user.Email;
+            user.Status = dto.Status;
             await _userRepository.UpdateAsync(user);
         }
 

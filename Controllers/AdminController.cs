@@ -20,9 +20,9 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Users()
+    public async Task<IActionResult> Users(string? search, string? status)
     {
-        var users = await _userService.GetAllAsync();
+        var users = await _userService.GetAllAsync(search, status);
         return View(users);
     }
 
@@ -32,6 +32,21 @@ public class AdminController : Controller
         await _userService.CreateAsync(dto);
         return RedirectToAction(nameof(Users));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateUser(UpdateUserDto dto)
+    {
+        await _userService.UpdateAsync(dto);
+        return RedirectToAction(nameof(Users));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        await _userService.DeleteAsync(id);
+        return RedirectToAction(nameof(Users));
+    }
+
 
     [HttpGet]
     public IActionResult Tasks()

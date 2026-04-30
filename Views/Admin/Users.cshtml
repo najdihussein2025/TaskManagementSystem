@@ -2,6 +2,11 @@
 @{
     Layout = null;
     ViewData["Title"] = "Manage Users";
+    var searchValue = Context.Request.Query["search"].ToString();
+    var statusValue = Context.Request.Query["status"].ToString();
+    var pageValue = Context.Request.Query["page"].ToString();
+    var activePage = int.TryParse(pageValue, out var parsedPage) && parsedPage > 0 ? parsedPage : 1;
+    string BuildPageUrl(int page) => Url.Action("Users", "Admin", new { search = searchValue, status = statusValue, page }) ?? "#";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -44,17 +49,19 @@
                     <button class="btn-primary action-main" id="openAddUser">+ Add User</button>
                 </section>
 
-                <section class="card filter-card">
-                    <input id="userSearch" type="text" placeholder="Search by name or email..." />
-                    <select id="roleFilter"><option>All Roles</option><option>Admin</option><option>User</option></select>
-                    <select id="statusFilter"><option>All Status</option><option>Active</option><option>Inactive</option></select>
-                    <button class="btn-primary" id="applyFilters">Apply Filters</button>
-                </section>
+                <form class="card filter-card" id="usersFilterForm" method="get" action="/Admin/Users">
+                    <input id="userSearch" name="search" type="text" placeholder="Search by name or email..." value="@searchValue" />
+                    <select id="statusFilter" name="status">
+                        <option value="" selected="@(string.IsNullOrWhiteSpace(statusValue))">All Status</option>
+                        <option value="Active" selected="@(statusValue == "Active")">Active</option>
+                        <option value="Inactive" selected="@(statusValue == "Inactive")">Inactive</option>
+                    </select>
+                </form>
 
                 <section class="card table-card">
                     <div class="table-wrap">
                         <table id="usersTable">
-                            <thead><tr><th>Avatar+Name</th><th>Email</th><th>Role</th><th>Tasks</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>Avatar+Name</th><th>Email</th><th>Tasks</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
                             <tbody>
                                 @if (!Model.Any())
                                 {
@@ -74,21 +81,21 @@
                                             1 => parts[0][0].ToString().ToUpper(),
                                             _ => $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[^1][0])}"
                                         };
-                                        var roleName = string.IsNullOrWhiteSpace(user.RoleName) ? "User" : user.RoleName;
-                                        var roleClass = roleName.Equals("Admin", StringComparison.OrdinalIgnoreCase) ? "admin" : "user";
                                         var statusClass = user.IsActive ? "active" : "inactive";
                                         var statusText = user.IsActive ? "Active" : "Inactive";
-                                        <tr data-name="@name" data-email="@user.Email" data-role="@roleName" data-status="@statusText">
+                                        var joinedText = user.CreatedAt == default ? "-" : user.CreatedAt.ToString("dd MMM yyyy");
+                                        <tr data-id="@user.Id" data-name="@name" data-email="@user.Email" data-status="@statusText">
                                             <td><span class="row-user"><span class="tiny-avatar c1">@initials</span>@name</span></td>
                                             <td>@user.Email</td>
-                                            <td><span class="role-badge @roleClass">@roleName</span></td>
-                                            <td>-</td>
+                                            <td>0</td>
                                             <td><span class="pill @statusClass">@statusText</span></td>
-                                            <td>-</td>
+                                            <td>@joinedText</td>
                                             <td>
                                                 <button class="action-btn edit-user">Edit</button>
-                                                <button class="action-btn delete-user">Delete</button>
-                                                <div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div>
+                                                <form method="post" action="/Admin/DeleteUser" style="display:inline;" onsubmit="return confirm('Delete this user?');">
+                                                    <input type="hidden" name="id" value="@user.Id" />
+                                                    <button class="action-btn delete-user" type="submit">Delete</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     }
@@ -96,7 +103,13 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="pagination"><button>Previous</button><button class="active">1</button><button>2</button><button>3</button><button>Next</button></div>
+                    <div class="pagination">
+                        <a href="@BuildPageUrl(Math.Max(1, activePage - 1))">Previous</a>
+                        <a class="@(activePage == 1 ? "active" : string.Empty)" href="@BuildPageUrl(1)">1</a>
+                        <a class="@(activePage == 2 ? "active" : string.Empty)" href="@BuildPageUrl(2)">2</a>
+                        <a class="@(activePage == 3 ? "active" : string.Empty)" href="@BuildPageUrl(3)">3</a>
+                        <a href="@BuildPageUrl(activePage + 1)">Next</a>
+                    </div>
                 </section>
             </div>
         </section>
@@ -106,6 +119,7 @@
         <div class="modal-card">
             <h3 id="userModalTitle">Add New User</h3>
             <form id="userForm" method="post" action="/Admin/CreateUser">
+                <input type="hidden" id="userId" name="Id" />
                 <label>Full Name<input id="userName" name="FullName" type="text" /></label>
                 <label>Email<input id="userEmail" name="Email" type="email" /></label>
                 <label class="password-only">Password<input id="userPassword" name="Password" type="password" /></label>

@@ -1,3 +1,5 @@
+using TaskManagementSystem.Enums;
+
 namespace TaskManagementSystem.DTOs.User;
 
 public class CreateUserDto
@@ -6,5 +8,5 @@ public class CreateUserDto
     public string? Email { get; set; }
     public string? Password { get; set; }
     public string? RoleName { get; set; }
-    public string? Status { get; set; }
+    public UserStatus Status { get; set; }
 }

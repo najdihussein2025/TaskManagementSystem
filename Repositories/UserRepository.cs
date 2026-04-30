@@ -2,6 +2,7 @@ using TaskManagementSystem.Interfaces.Repositories;
 using TaskManagementSystem.Models;
 using TaskManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem.Enums;
 
 namespace TaskManagementSystem.Repositories
 {
@@ -57,6 +58,14 @@ namespace TaskManagementSystem.Repositories
             if (user is null) return;
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<ApplicationUser>> GetByStatusAsync(UserStatus status)
+        {
+            return await _context.Users
+                .Include(user => user.Role)
+                .Where(user => user.Status == status)
+                .ToListAsync();
         }
     }
 }

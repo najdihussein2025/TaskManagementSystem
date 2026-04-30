@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TaskManagementSystem.Enums;
 
 namespace TaskManagementSystem.Models
 {
@@ -13,7 +14,7 @@ namespace TaskManagementSystem.Models
 
         public string PasswordHash { get; set; }
 
-        public bool IsActive { get; set; }
+        public UserStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

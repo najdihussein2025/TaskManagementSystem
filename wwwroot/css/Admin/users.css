@@ -3,7 +3,7 @@
 .users-page .page-head p { margin:4px 0 0; color:var(--text-muted); }
 .btn-primary { border:none; background:var(--accent); color:#fff; border-radius:10px; padding:10px 14px; cursor:pointer; }
 .btn-primary:hover { background:var(--accent-hover); }
-.filter-card { display:grid; grid-template-columns:1fr 170px 170px auto; gap:12px; margin-bottom:16px; }
+.filter-card { display:grid; grid-template-columns:1fr 180px; gap:12px; margin-bottom:16px; }
 .filter-card input,.filter-card select { background:#101a31; border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px; }
 .row-user { display:flex; align-items:center; gap:10px; }
 .tiny-avatar { width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:700; }
@@ -16,7 +16,7 @@ tr.deleting { background:rgba(239,68,68,0.12); }
 tr.deleting .confirm-delete { display:block; }
 .confirm-delete button { border:none; background:transparent; color:#fff; cursor:pointer; font-size:11px; margin-left:4px; }
 .pagination { display:flex; gap:8px; justify-content:flex-end; padding:12px 0 4px; }
-.pagination button { background:#101a31; border:1px solid var(--border); color:var(--text-secondary); border-radius:8px; padding:6px 10px; }
+.pagination a { background:#101a31; border:1px solid var(--border); color:var(--text-secondary); border-radius:8px; padding:6px 10px; text-decoration:none; }
 .pagination .active { background:var(--accent); color:#fff; border-color:transparent; }
 
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:80; }
@@ -30,5 +30,5 @@ tr.deleting .confirm-delete { display:block; }
 .ghost-btn { border:1px solid var(--border); background:transparent; color:var(--text-secondary); border-radius:10px; padding:10px 12px; }
 @keyframes fadeScale { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
 
-@media (max-width:1024px){ .filter-card{grid-template-columns:1fr 1fr;} }
+@media (max-width:1024px){ .filter-card{grid-template-columns:1fr 180px;} }
 @media (max-width:768px){ .filter-card{grid-template-columns:1fr;} .users-page .page-head{flex-direction:column;align-items:flex-start;gap:10px;} }
