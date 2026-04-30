@@ -1,24 +1,184 @@
+@model List<TaskManagementSystem.DTOs.Category.CategoryDto>
 @{
     Layout = null;
     ViewData["Title"] = "Categories";
+    var totalCategories = Model?.Count ?? 0;
 }
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>@ViewData["Title"] - TaskFlow</title><link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/Admin/admin.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/Admin/categories.css" asp-append-version="true" /></head>
-<body class="admin-body"><div class="admin-wrapper" id="adminWrapper">
-<aside class="admin-sidebar" id="adminSidebar"><div class="sidebar-top"><div class="logo-wrap"><a class="brand" href="/"><span class="brand-icon">✓</span><span class="brand-text sidebar-text">TaskFlow</span></a><p class="panel-label sidebar-text">Admin Panel</p></div><div class="sidebar-divider"></div><nav class="side-nav" id="sideNav"><a href="/Admin/Dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Dashboard</span></a><a href="/Admin/Users" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">12</span></a><a href="/Admin/Tasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">48</span></a><a href="/Admin/Categories" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Categories</span></a><a href="/Admin/Reports" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Reports</span></a><div class="sidebar-divider nav-divider"></div><a href="/Admin/Settings" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4-.9-.3a7.9 7.9 0 0 0-.5-1.3l.5-.8-1.4-1.4-.8.5a7.9 7.9 0 0 0-1.3-.5L15 4h-2l-.3.9a7.9 7.9 0 0 0-1.3.5l-.8-.5-1.4 1.4.5.8a7.9 7.9 0 0 0-.5 1.3L4 10v2l.9.3c.1.5.3.9.5 1.3l-.5.8 1.4 1.4.8-.5c.4.2.8.4 1.3.5L10 20h2l.3-.9c.5-.1.9-.3 1.3-.5l.8.5 1.4-1.4-.5-.8c.2-.4.4-.8.5-1.3l.9-.3v-2Z" stroke="currentColor" stroke-width="1.5"/></svg><span class="sidebar-text">Settings</span></a></nav></div><div class="sidebar-bottom"><div class="profile-card"><div class="avatar">A</div><div class="profile-info sidebar-text"><strong>Admin User</strong><span>admin@taskflow.com</span></div><a class="logout-btn" href="/Auth/Login"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8"/></svg></a></div></div><button class="collapse-btn" id="collapseSidebar" type="button">❮</button></aside>
-<section class="admin-main"><header class="topbar"><div><h1>Categories</h1><p id="todayDate"></p></div><div class="topbar-actions"><button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button><button class="btn-primary" id="catQuickAdd">+ Add Category</button><div class="dropdown-wrap"><button class="avatar-btn" id="avatarBtn" type="button">A</button><div class="dropdown-menu profile-menu" id="profileMenu"><a href="#">My Profile</a><a href="/Auth/Login">Logout</a></div></div></div></header>
-<div class="page-content categories-page">
-<section class="grid-main"><article class="card"><div class="card-title-row"><h2>Categories</h2></div><div class="table-wrap"><table id="categoriesTable"><thead><tr><th>Color Dot</th><th>Name</th><th>Description</th><th>Task Count</th><th>Actions</th></tr></thead><tbody>
-<tr data-name="Design" data-desc="UI/UX and visual design tasks" data-color="#3b82f6"><td><span class="dot" style="background:#3b82f6"></span></td><td>Design</td><td>UI/UX and visual design tasks</td><td><span class="count-badge">18 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="Backend" data-desc="Server-side and API tasks" data-color="#22c55e"><td><span class="dot" style="background:#22c55e"></span></td><td>Backend</td><td>Server-side and API tasks</td><td><span class="count-badge">32 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="Frontend" data-desc="Client-side UI development" data-color="#f59e0b"><td><span class="dot" style="background:#f59e0b"></span></td><td>Frontend</td><td>Client-side UI development</td><td><span class="count-badge">24 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="Docs" data-desc="Documentation and writing" data-color="#a78bfa"><td><span class="dot" style="background:#a78bfa"></span></td><td>Docs</td><td>Documentation and writing</td><td><span class="count-badge">10 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="DevOps" data-desc="Deployment and infrastructure" data-color="#14b8a6"><td><span class="dot" style="background:#14b8a6"></span></td><td>DevOps</td><td>Deployment and infrastructure</td><td><span class="count-badge">8 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="Testing" data-desc="QA and bug fixing" data-color="#ef4444"><td><span class="dot" style="background:#ef4444"></span></td><td>Testing</td><td>QA and bug fixing</td><td><span class="count-badge">14 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="Research" data-desc="Planning and investigation" data-color="#ec4899"><td><span class="dot" style="background:#ec4899"></span></td><td>Research</td><td>Planning and investigation</td><td><span class="count-badge">6 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-<tr data-name="General" data-desc="Uncategorized tasks" data-color="#94a3b8"><td><span class="dot" style="background:#94a3b8"></span></td><td>General</td><td>Uncategorized tasks</td><td><span class="count-badge">36 tasks</span></td><td><button class="action-btn edit-cat">Edit</button><button class="action-btn delete-cat">Delete</button><div class="confirm-delete">Confirm? <button class="yes">Yes</button><button class="no">No</button></div></td></tr>
-</tbody></table></div></article>
-<article class="card"><h2 id="catFormTitle">Add New Category</h2><form id="categoryForm"><label>Category Name<input id="catName" /></label><label>Description<textarea id="catDesc" rows="2"></textarea></label><div><p>Pick Color</p><div class="color-picker" id="colorPicker"><button type="button" data-color="#3b82f6" class="selected"></button><button type="button" data-color="#22c55e"></button><button type="button" data-color="#f59e0b"></button><button type="button" data-color="#a78bfa"></button><button type="button" data-color="#14b8a6"></button><button type="button" data-color="#ef4444"></button><button type="button" data-color="#ec4899"></button><button type="button" data-color="#94a3b8"></button></div></div><button class="btn-primary" type="submit">Save Category</button><button id="cancelEdit" type="button" class="link-btn">Cancel Edit</button></form></article></section>
-<section class="stats-mini"><article class="card"><h4>Total Categories</h4><strong>8</strong></article><article class="card"><h4>Most Used</h4><strong>Backend (32 tasks)</strong></article><article class="card"><h4>Least Used</h4><strong>Research (6 tasks)</strong></article></section>
-</div></section></div>
-<script src="~/js/Admin/admin.js" asp-append-version="true"></script><script src="~/js/Admin/categories.js" asp-append-version="true"></script></body></html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/categories.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="adminWrapper">
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-top">
+            <div class="logo-wrap">
+                <a class="brand" href="/">
+                    <span class="brand-icon">✓</span>
+                    <span class="brand-text sidebar-text">TaskFlow</span>
+                </a>
+                <p class="panel-label sidebar-text">Admin Panel</p>
+            </div>
+            <div class="sidebar-divider"></div>
+            <nav class="side-nav" id="sideNav">
+                <a href="/Admin/Dashboard" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8" /></svg>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="/Admin/Users" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8" /></svg>
+                    <span class="sidebar-text">Manage Users</span>
+                </a>
+                <a href="/Admin/Tasks" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" /></svg>
+                    <span class="sidebar-text">Manage Tasks</span>
+                </a>
+                <a href="/Admin/Categories" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8" /></svg>
+                    <span class="sidebar-text">Categories</span>
+                    <span class="nav-badge">@totalCategories</span>
+                </a>
+                <a href="/Admin/Reports" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8" /></svg>
+                    <span class="sidebar-text">Reports</span>
+                </a>
+                <div class="sidebar-divider nav-divider"></div>
+                <a href="/Admin/Settings" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4-.9-.3a7.9 7.9 0 0 0-.5-1.3l.5-.8-1.4-1.4-.8.5a7.9 7.9 0 0 0-1.3-.5L15 4h-2l-.3.9a7.9 7.9 0 0 0-1.3.5l-.8-.5-1.4 1.4.5.8a7.9 7.9 0 0 0-.5 1.3L4 10v2l.9.3c.1.5.3.9.5 1.3l-.5.8 1.4 1.4.8-.5c.4.2.8.4 1.3.5L10 20h2l.3-.9c.5-.1.9-.3 1.3-.5l.8.5 1.4-1.4-.5-.8c.2-.4.4-.8.5-1.3l.9-.3v-2Z" stroke="currentColor" stroke-width="1.5" /></svg>
+                    <span class="sidebar-text">Settings</span>
+                </a>
+            </nav>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="profile-card">
+                <div class="avatar">A</div>
+                <div class="profile-info sidebar-text">
+                    <strong>Admin User</strong>
+                </div>
+                <a class="logout-btn" href="/Auth/Login">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" /></svg>
+                </a>
+            </div>
+        </div>
+        <button class="collapse-btn" id="collapseSidebar" type="button">❮</button>
+    </aside>
+
+    <section class="admin-main">
+        <header class="topbar">
+            <div>
+                <h1>Categories</h1>
+                <p id="todayDate"></p>
+            </div>
+            <div class="topbar-actions">
+                <button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button>
+                <button class="btn-primary" id="catQuickAdd">+ Add Category</button>
+                <div class="dropdown-wrap">
+                    <button class="avatar-btn" id="avatarBtn" type="button">A</button>
+                    <div class="dropdown-menu profile-menu" id="profileMenu">
+                        <a href="#">My Profile</a>
+                        <a href="/Auth/Login">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content categories-page">
+            <section class="grid-main">
+                <article class="card">
+                    <div class="card-title-row"><h2>Categories</h2></div>
+                    <div class="table-wrap">
+                        <table id="categoriesTable">
+                            <thead>
+                                <tr>
+                                    <th>Color Dot</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Task Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model is null || !Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5">No categories available.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var category in Model)
+                                    {
+                                        var dotColor = string.IsNullOrWhiteSpace(category.Color) ? "#3b82f6" : category.Color;
+                                        <tr data-id="@category.Id" data-name="@category.Name" data-desc="@category.Description" data-color="@dotColor">
+                                            <td><span class="dot" style="background:@dotColor"></span></td>
+                                            <td>@(string.IsNullOrWhiteSpace(category.Name) ? "-" : category.Name)</td>
+                                            <td>@(string.IsNullOrWhiteSpace(category.Description) ? "-" : category.Description)</td>
+                                            <td><span class="count-badge">-</span></td>
+                                            <td>
+                                                <button class="action-btn edit-cat" type="button">Edit</button>
+                                                <form method="post" action="/Admin/DeleteCategory" style="display:inline;" onsubmit="return confirm('Delete this category?');">
+                                                    <input type="hidden" name="id" value="@category.Id" />
+                                                    <button class="action-btn delete-cat" type="submit">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h2 id="catFormTitle">Add New Category</h2>
+                    <form id="categoryForm" method="post" action="/Admin/CreateCategory">
+                        <input type="hidden" id="catId" name="Id" />
+                        <input type="hidden" id="catColor" name="Color" value="#3b82f6" />
+                        <label>Category Name<input id="catName" name="Name" required /></label>
+                        <label>Description<textarea id="catDesc" name="Description" rows="2"></textarea></label>
+                        <div>
+                            <p>Pick Color</p>
+                            <div class="color-picker" id="colorPicker">
+                                <button type="button" data-color="#3b82f6" class="selected"></button>
+                                <button type="button" data-color="#22c55e"></button>
+                                <button type="button" data-color="#f59e0b"></button>
+                                <button type="button" data-color="#a78bfa"></button>
+                                <button type="button" data-color="#14b8a6"></button>
+                                <button type="button" data-color="#ef4444"></button>
+                                <button type="button" data-color="#ec4899"></button>
+                                <button type="button" data-color="#94a3b8"></button>
+                            </div>
+                        </div>
+                        <button class="btn-primary" type="submit">Save Category</button>
+                        <button id="cancelEdit" type="button" class="link-btn">Cancel Edit</button>
+                    </form>
+                </article>
+            </section>
+
+            <section class="stats-mini">
+                <article class="card">
+                    <h4>Total Categories</h4>
+                    <strong>@totalCategories</strong>
+                </article>
+                <article class="card">
+                    <h4>Most Used</h4>
+                    <strong>-</strong>
+                </article>
+                <article class="card">
+                    <h4>Least Used</h4>
+                    <strong>-</strong>
+                </article>
+            </section>
+        </div>
+    </section>
+</div>
+<script src="~/js/Admin/admin.js" asp-append-version="true"></script>
+<script src="~/js/Admin/categories.js" asp-append-version="true"></script>
+</body>
+</html>

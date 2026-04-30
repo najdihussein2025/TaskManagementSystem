@@ -15,4 +15,4 @@ namespace TaskManagementSystem.Interfaces.Repositories
         Task UpdateAsync(ApplicationUser user);//update user
         Task DeleteAsync(int id);//delete user
     }
-}ut 
+}

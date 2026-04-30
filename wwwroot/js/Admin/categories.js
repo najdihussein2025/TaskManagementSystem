@@ -3,29 +3,51 @@ document.addEventListener("DOMContentLoaded", () => {
   const title = document.getElementById("catFormTitle");
   const cancel = document.getElementById("cancelEdit");
   const picker = document.getElementById("colorPicker");
+  const idInput = document.getElementById("catId");
+  const nameInput = document.getElementById("catName");
+  const descInput = document.getElementById("catDesc");
+  const colorInput = document.getElementById("catColor");
+  const quickAddBtn = document.getElementById("catQuickAdd");
+
+  const updateSelectedColor = (color) => {
+    if (colorInput) colorInput.value = color;
+    picker?.querySelectorAll("button").forEach((button) => {
+      button.classList.toggle("selected", button.dataset.color === color);
+    });
+  };
 
   picker?.querySelectorAll("button").forEach((btn) => btn.addEventListener("click", () => {
-    picker.querySelectorAll("button").forEach((b) => b.classList.remove("selected"));
-    btn.classList.add("selected");
+    updateSelectedColor(btn.dataset.color || "#3b82f6");
   }));
 
   const resetForm = () => {
     form?.reset();
-    form.classList.remove("editing");
-    title.textContent = "Add New Category";
-    cancel.style.display = "none";
+    if (form) form.action = "/Admin/CreateCategory";
+    if (idInput) idInput.value = "";
+    form?.classList.remove("editing");
+    if (title) title.textContent = "Add New Category";
+    if (cancel) cancel.style.display = "none";
+    updateSelectedColor("#3b82f6");
   };
 
   document.querySelectorAll(".edit-cat").forEach((btn) => btn.addEventListener("click", () => {
-    title.textContent = "Edit Category";
+    const row = btn.closest("tr");
+    if (!row || !form) return;
+
+    if (idInput) idInput.value = row.dataset.id || "";
+    if (nameInput) nameInput.value = row.dataset.name || "";
+    if (descInput) descInput.value = row.dataset.desc || "";
+    updateSelectedColor(row.dataset.color || "#3b82f6");
+
+    form.action = "/Admin/UpdateCategory";
     form.classList.add("editing");
-    cancel.style.display = "inline-block";
+    if (title) title.textContent = "Edit Category";
+    if (cancel) cancel.style.display = "inline-block";
   }));
 
+  quickAddBtn?.addEventListener("click", () => {
+    resetForm();
+    form?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
   cancel?.addEventListener("click", resetForm);
-  form?.addEventListener("submit", () => resetForm());
-
-  document.querySelectorAll(".delete-cat, .confirm-delete .no, .confirm-delete .yes").forEach((btn) =>
-    btn.addEventListener("click", () => {})
-  );
 });

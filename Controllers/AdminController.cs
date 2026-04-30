@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Interfaces.Services;
+using TaskManagementSystem.DTOs.Category;
 using TaskManagementSystem.DTOs.User;
 
 namespace TaskManagementSystem.Controllers;
@@ -7,10 +8,12 @@ namespace TaskManagementSystem.Controllers;
 public class AdminController : Controller
 {
     private readonly IUserService _userService;
+    private readonly ICategoryService _categoryService;
 
-    public AdminController(IUserService userService)
+    public AdminController(IUserService userService, ICategoryService categoryService)
     {
         _userService = userService;
+        _categoryService = categoryService;
     }
 
     [HttpGet]
@@ -55,9 +58,43 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public IActionResult Categories()
+    public async Task<IActionResult> Categories()
     {
-        return View();
+        var categories = await _categoryService.GetAllAsync();
+        return View(categories);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateCategory(CreateCategoryDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            var categories = await _categoryService.GetAllAsync();
+            return View(nameof(Categories), categories);
+        }
+
+        await _categoryService.CreateAsync(dto);
+        return RedirectToAction(nameof(Categories));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateCategory(UpdateCategoryDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            var categories = await _categoryService.GetAllAsync();
+            return View(nameof(Categories), categories);
+        }
+
+        await _categoryService.UpdateAsync(dto);
+        return RedirectToAction(nameof(Categories));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteCategory(int id)
+    {
+        await _categoryService.DeleteAsync(id);
+        return RedirectToAction(nameof(Categories));
     }
 
     [HttpGet]
