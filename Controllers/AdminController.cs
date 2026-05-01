@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using TaskManagementSystem.DTOs.Task;
 using TaskManagementSystem.Interfaces.Services;
-using TaskManagementSystem.DTOs.Category;
 using TaskManagementSystem.DTOs.User;
 
 namespace TaskManagementSystem.Controllers;
@@ -8,11 +8,16 @@ namespace TaskManagementSystem.Controllers;
 public class AdminController : Controller
 {
     private readonly IUserService _userService;
+    private readonly ITaskService _taskService;
     private readonly ICategoryService _categoryService;
 
-    public AdminController(IUserService userService, ICategoryService categoryService)
+    public AdminController(
+        IUserService userService,
+        ITaskService taskService,
+        ICategoryService categoryService)
     {
         _userService = userService;
+        _taskService = taskService;
         _categoryService = categoryService;
     }
 
@@ -50,51 +55,94 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Users));
     }
 
-
     [HttpGet]
-    public IActionResult Tasks()
+    public async Task<IActionResult> Tasks(
+        string? search,
+        string? status,
+        string? priority,
+        int? categoryId,
+        int? userId)
     {
-        return View();
-    }
+        var filter = new TaskFilterDto
+        {
+            Search = search,
+            Status = status,
+            Priority = priority,
+            CategoryId = categoryId,
+            UserId = userId
+        };
 
-    [HttpGet]
-    public async Task<IActionResult> Categories()
-    {
+        var tasks = await _taskService.FilterTasksAsync(filter);
+        var users = await _userService.GetAllAsync();
         var categories = await _categoryService.GetAllAsync();
-        return View(categories);
+
+        ViewBag.Users = users;
+        ViewBag.Categories = categories;
+        ViewBag.Filter = filter;
+
+        return View(tasks);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCategory(CreateCategoryDto dto)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateTask(CreateTaskDto dto)
     {
         if (!ModelState.IsValid)
         {
-            var categories = await _categoryService.GetAllAsync();
-            return View(nameof(Categories), categories);
+            TempData["Error"] = "Please fill in all required fields.";
+            return RedirectToAction(nameof(Tasks));
         }
 
-        await _categoryService.CreateAsync(dto);
-        return RedirectToAction(nameof(Categories));
+        await _taskService.CreateTaskAsync(dto);
+        TempData["Success"] = "Task created successfully.";
+        return RedirectToAction(nameof(Tasks));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetTask(int id)
+    {
+        var task = await _taskService.GetTaskByIdAsync(id);
+        if (task == null) return NotFound();
+        return Json(task);
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateCategory(UpdateCategoryDto dto)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditTask(int id, UpdateTaskDto dto)
     {
         if (!ModelState.IsValid)
         {
-            var categories = await _categoryService.GetAllAsync();
-            return View(nameof(Categories), categories);
+            TempData["Error"] = "Invalid task data.";
+            return RedirectToAction(nameof(Tasks));
         }
 
-        await _categoryService.UpdateAsync(dto);
-        return RedirectToAction(nameof(Categories));
+        var result = await _taskService.UpdateTaskAsync(id, dto);
+        if (result == null)
+        {
+            TempData["Error"] = "Task not found.";
+            return RedirectToAction(nameof(Tasks));
+        }
+
+        TempData["Success"] = "Task updated successfully.";
+        return RedirectToAction(nameof(Tasks));
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteCategory(int id)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteTask(int id)
     {
-        await _categoryService.DeleteAsync(id);
-        return RedirectToAction(nameof(Categories));
+        var success = await _taskService.DeleteTaskAsync(id);
+        TempData[success ? "Success" : "Error"] =
+            success ? "Task deleted." : "Task not found.";
+
+        return RedirectToAction(nameof(Tasks));
+    }
+    
+
+    [HttpGet]
+    public IActionResult Categories()
+    {
+        return RedirectToAction("Index", "Category");
     }
 
     [HttpGet]

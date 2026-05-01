@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const resetForm = () => {
     form?.reset();
-    if (form) form.action = "/Admin/CreateCategory";
+    if (form) form.action = "/Category/Create";
     if (idInput) idInput.value = "";
     form?.classList.remove("editing");
     if (title) title.textContent = "Add New Category";
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (descInput) descInput.value = row.dataset.desc || "";
     updateSelectedColor(row.dataset.color || "#3b82f6");
 
-    form.action = "/Admin/UpdateCategory";
+    form.action = "/Category/Edit";
     form.classList.add("editing");
     if (title) title.textContent = "Edit Category";
     if (cancel) cancel.style.display = "inline-block";

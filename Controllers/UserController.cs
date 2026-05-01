@@ -4,6 +4,8 @@ namespace TaskManagementSystem.Controllers;
 
 public class UserController : Controller
 {
+    public UserController() { }
+
     [HttpGet]
     public IActionResult Index()
     {
@@ -12,6 +14,12 @@ public class UserController : Controller
 
     [HttpGet]
     public IActionResult Dashboard()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Profile()
     {
         return View();
     }
@@ -28,14 +36,8 @@ public class UserController : Controller
         return View();
     }
 
-    [HttpGet]
-    public IActionResult Profile()
-    {
-        return View();
-    }
-
     [HttpPost]
-    public IActionResult UpdateTaskStatus(int taskId, string status)
+    public IActionResult UpdateTaskStatus()
     {
         return RedirectToAction(nameof(MyTasks));
     }

@@ -11,11 +11,12 @@ namespace TaskManagementSystem.Controllers{
             _categoryService = categoryService;
         }
 
-        [HttpGet]
+        [HttpGet("Category")]
+        [HttpGet("/Admin/Categories")]
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryService.GetAllAsync();
-            return View(categories);
+            return View("~/Views/Admin/Categories.cshtml", categories);
         }
 
         [HttpGet]
@@ -24,27 +25,39 @@ namespace TaskManagementSystem.Controllers{
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("Category/Create")]
+        [HttpPost("/Admin/CreateCategory")]
         public async Task<IActionResult> Create(CreateCategoryDto dto)
         {
             if (!ModelState.IsValid)
             {
-                return View(dto);
+                var categories = await _categoryService.GetAllAsync();
+                return View("~/Views/Admin/Categories.cshtml", categories);
             }
 
             await _categoryService.CreateAsync(dto);
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        [HttpPost("Category/Edit")]
+        [HttpPost("/Admin/UpdateCategory")]
         public async Task<IActionResult> Edit(UpdateCategoryDto dto)
         {
             if (!ModelState.IsValid)
             {
-                return View(dto);
+                var categories = await _categoryService.GetAllAsync();
+                return View("~/Views/Admin/Categories.cshtml", categories);
             }
 
             await _categoryService.UpdateAsync(dto);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost("Category/Delete")]
+        [HttpPost("/Admin/DeleteCategory")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _categoryService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

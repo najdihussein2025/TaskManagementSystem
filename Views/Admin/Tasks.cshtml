@@ -1,6 +1,15 @@
+@model IEnumerable<TaskManagementSystem.DTOs.Task.TaskDto>
+@using TaskManagementSystem.DTOs.Category
+@using TaskManagementSystem.DTOs.Task
+@using TaskManagementSystem.DTOs.User
+@using TaskPriorityEnum = TaskManagementSystem.Enums.TaskPriority
+@using TaskStatusEnum = TaskManagementSystem.Enums.TaskStatus
 @{
     Layout = null;
     ViewData["Title"] = "Manage Tasks";
+    var users = ViewBag.Users as IEnumerable<UserDto> ?? Enumerable.Empty<UserDto>();
+    var categories = ViewBag.Categories as IEnumerable<CategoryDto> ?? Enumerable.Empty<CategoryDto>();
+    var filter = ViewBag.Filter as TaskFilterDto ?? new TaskFilterDto();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +46,7 @@
                     <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Manage Tasks</span>
                 </a>
-                <a href="/Admin/Categories" class="nav-item">
+                <a href="/Category" class="nav-item">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Categories</span>
                 </a>
@@ -72,25 +81,6 @@
                 <h1>Manage Tasks</h1>
                 <p id="todayDate"></p>
             </div>
-            <div class="topbar-actions">
-                <button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button>
-                <div class="search-wrap"><input type="text" placeholder="Search tasks..." /></div>
-                <div class="dropdown-wrap">
-                    <button class="icon-btn" id="notifBtn" type="button">
-                        <svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8" /></svg>
-                    </button>
-                    <div class="dropdown-menu" id="notifMenu">
-                        <p>No notifications.</p>
-                    </div>
-                </div>
-                <div class="dropdown-wrap">
-                    <button class="avatar-btn" id="avatarBtn" type="button">A</button>
-                    <div class="dropdown-menu profile-menu" id="profileMenu">
-                        <a href="#">My Profile</a>
-                        <a href="/Auth/Login">Logout</a>
-                    </div>
-                </div>
-            </div>
         </header>
 
         <div class="page-content tasks-page">
@@ -99,24 +89,51 @@
                     <h2>Manage Tasks</h2>
                     <p>View and manage all system tasks</p>
                 </div>
-                <button class="btn-primary" id="openTaskModal">+ Create Task</button>
+                <button class="btn-primary" id="openTaskModal" type="button">+ Create Task</button>
             </section>
 
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert-success">@TempData["Success"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert-error">@TempData["Error"]</div>
+            }
+
             <section class="card filter-card">
-                <input id="taskSearch" type="text" placeholder="Search tasks..." />
-                <select id="statusFilter">
-                    <option>All Status</option>
-                </select>
-                <select id="priorityFilter">
-                    <option>All Priority</option>
-                </select>
-                <select id="categoryFilter">
-                    <option>All Categories</option>
-                </select>
-                <select id="userFilter">
-                    <option>All Users</option>
-                </select>
-                <button class="btn-primary" id="applyTaskFilters">Apply Filters</button>
+                <form id="taskFilterForm" method="get" action="/Admin/Tasks" style="display: contents;">
+                    <input id="taskSearch" name="search" type="text" placeholder="Search tasks..." value="@filter.Search" />
+                    <select id="statusFilter" name="status">
+                        <option value="">All Status</option>
+                        @foreach (TaskStatusEnum status in Enum.GetValues(typeof(TaskStatusEnum)))
+                        {
+                            <option value="@status" selected="@(string.Equals(filter.Status, status.ToString(), StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@status</option>
+                        }
+                    </select>
+                    <select id="priorityFilter" name="priority">
+                        <option value="">All Priority</option>
+                        @foreach (TaskPriorityEnum priority in Enum.GetValues(typeof(TaskPriorityEnum)))
+                        {
+                            <option value="@priority" selected="@(string.Equals(filter.Priority, priority.ToString(), StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@priority</option>
+                        }
+                    </select>
+                    <select id="categoryFilter" name="categoryId">
+                        <option value="">All Categories</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.Id" selected="@(filter.CategoryId == category.Id ? "selected" : null)">@category.Name</option>
+                        }
+                    </select>
+                    <select id="userFilter" name="userId">
+                        <option value="">All Users</option>
+                        @foreach (var user in users)
+                        {
+                            <option value="@user.Id" selected="@(filter.UserId == user.Id ? "selected" : null)">@user.FullName</option>
+                        }
+                    </select>
+                    <button class="btn-primary" id="applyTaskFilters" type="submit">Apply Filters</button>
+                </form>
             </section>
 
             <section class="card table-card">
@@ -134,9 +151,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="7">No tasks available.</td>
-                            </tr>
+                            @if (Model.Any())
+                            {
+                                @foreach (var task in Model)
+                                {
+                                    <tr>
+                                        <td>@task.Title</td>
+                                        <td>@(string.IsNullOrWhiteSpace(task.AssignedToName) ? "Unassigned" : task.AssignedToName)</td>
+                                        <td>@(task.CategoryName ?? "-")</td>
+                                        <td>@task.Priority</td>
+                                        <td>@(task.DueDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                        <td>@task.Status</td>
+                                        <td>
+                                            <button type="button" class="view-task" data-title="@task.Title" data-description="@task.Description" data-assigned="@task.AssignedToName" data-category="@task.CategoryName" data-priority="@task.Priority" data-status="@task.Status" data-due="@(task.DueDate?.ToString("yyyy-MM-dd"))">View</button>
+                                            <button type="button" class="edit-task" data-id="@task.Id">Edit</button>
+                                            <form method="post" action="/Admin/DeleteTask/@task.Id" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="delete-task" onclick="return confirm('Delete this task?');">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" style="text-align:center;">No tasks found.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -148,28 +190,43 @@
 <div class="modal-overlay" id="taskFormOverlay">
     <div class="modal-card wide">
         <h3 id="taskModalTitle">Create Task</h3>
-        <form id="taskForm">
-            <label>Task Title<input id="tTitle" /></label>
-            <label>Description<textarea id="tDesc" rows="3"></textarea></label>
+        <form id="taskForm" method="post" action="/Admin/CreateTask">
+            @Html.AntiForgeryToken()
+            <label>Task Title<input id="tTitle" name="Title" required /></label>
+            <label>Description<textarea id="tDesc" name="Description" rows="3"></textarea></label>
             <label>Assign To
-                <select id="tAssign">
-                    <option value="">No users available</option>
+                <select id="tAssign" name="AssignedToUserId">
+                    <option value="">Unassigned</option>
+                    @foreach (var user in users)
+                    {
+                        <option value="@user.Id">@user.FullName (@user.Email)</option>
+                    }
                 </select>
             </label>
             <label>Category
-                <select id="tCategory">
-                    <option value="">No categories available</option>
+                <select id="tCategory" name="CategoryId">
+                    <option value="">Select category</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
                 </select>
             </label>
             <label>Priority
-                <select id="tPriority">
-                    <option value="">Select priority</option>
+                <select id="tPriority" name="Priority" required>
+                    @foreach (TaskPriorityEnum priority in Enum.GetValues(typeof(TaskPriorityEnum)))
+                    {
+                        <option value="@((int)priority)" selected="@(priority == TaskPriorityEnum.Medium ? "selected" : null)">@priority</option>
+                    }
                 </select>
             </label>
-            <label>Due Date<input id="tDate" type="date" /></label>
+            <label>Due Date<input id="tDate" name="DueDate" type="date" /></label>
             <label>Status
-                <select id="tStatus">
-                    <option value="">Select status</option>
+                <select id="tStatus" name="Status" required>
+                    @foreach (TaskStatusEnum status in Enum.GetValues(typeof(TaskStatusEnum)))
+                    {
+                        <option value="@((int)status)" selected="@(status == TaskStatusEnum.Pending ? "selected" : null)">@status</option>
+                    }
                 </select>
             </label>
             <div class="modal-actions">

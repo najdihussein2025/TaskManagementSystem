@@ -1,25 +1,15 @@
-using System.ComponentModel.DataAnnotations;
-using TaskManagementSystem.Enums;
+using TaskPriority = TaskManagementSystem.Enums.TaskPriority;
+using TaskStatus = TaskManagementSystem.Enums.TaskStatus;
 
 namespace TaskManagementSystem.DTOs.Task;
 
 public class CreateTaskDto
 {
-    [Required]
-    [MaxLength(150)]
     public string Title { get; set; } = string.Empty;
-
-    [MaxLength(500)]
-    public string Description { get; set; } = string.Empty;
-
-    public TaskPriority Priority { get; set; }
-
-    [Required]
-    public DateTime DueDate { get; set; }
-
-    [Required]
-    [Range(1, int.MaxValue)]
-    public int CategoryId { get; set; }
-
-    public int AssignedToUserId { get; set; }
+    public string? Description { get; set; }
+    public int? AssignedToUserId { get; set; }
+    public int? CategoryId { get; set; }
+    public TaskPriority Priority { get; set; } = TaskPriority.Medium;
+    public DateTime? DueDate { get; set; }
+    public TaskStatus Status { get; set; } = TaskStatus.Pending;
 }

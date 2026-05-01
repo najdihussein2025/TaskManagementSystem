@@ -39,7 +39,7 @@
                     <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Manage Tasks</span>
                 </a>
-                <a href="/Admin/Categories" class="nav-item active">
+                <a href="/Category" class="nav-item active">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Categories</span>
                     <span class="nav-badge">@totalCategories</span>
@@ -122,7 +122,7 @@
                                             <td><span class="count-badge">-</span></td>
                                             <td>
                                                 <button class="action-btn edit-cat" type="button">Edit</button>
-                                                <form method="post" action="/Admin/DeleteCategory" style="display:inline;" onsubmit="return confirm('Delete this category?');">
+                                                <form method="post" action="/Category/Delete" style="display:inline;" onsubmit="return confirm('Delete this category?');">
                                                     <input type="hidden" name="id" value="@category.Id" />
                                                     <button class="action-btn delete-cat" type="submit">Delete</button>
                                                 </form>
@@ -137,7 +137,7 @@
 
                 <article class="card">
                     <h2 id="catFormTitle">Add New Category</h2>
-                    <form id="categoryForm" method="post" action="/Admin/CreateCategory">
+                    <form id="categoryForm" method="post" action="/Category/Create">
                         <input type="hidden" id="catId" name="Id" />
                         <input type="hidden" id="catColor" name="Color" value="#3b82f6" />
                         <label>Category Name<input id="catName" name="Name" required /></label>
