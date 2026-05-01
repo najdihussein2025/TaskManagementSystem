@@ -1,17 +1,243 @@
+@model TaskManagementSystem.Dtos.Reports.ReportsDto
 @{
     Layout = null;
     ViewData["Title"] = "Reports";
+
+    // SVG chart: viewBox is 520x220, plot area x=40..500, y=20..180
+    // Map monthly counts to SVG coordinates
+    var pts = Model.MonthlyCompletions;
+    var maxPt = pts.Any() ? pts.Max(p => p.Count) : 1;
+    if (maxPt == 0) maxPt = 1;
+
+    var xStep = pts.Count > 1 ? 400.0 / (pts.Count - 1) : 0;
+    double SvgX(int i) => 70 + i * xStep;
+    double SvgY(int count) => 180 - ((double)count / maxPt * 160);
+
+    var polyPoints = string.Join(" ",
+        pts.Select((p, i) =>
+            $"{SvgX(i).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}," +
+            $"{SvgY(p.Count).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}"));
+
+    var maxCat = Model.TasksByCategory.Any()
+        ? Model.TasksByCategory.Max(c => c.TaskCount) : 1;
+    if (maxCat == 0) maxCat = 1;
+
+    string CatPct(int val) =>
+        $"{((double)val / maxCat * 100).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)}%";
+
+    string RateCss(double rate) =>
+        rate >= 75 ? "good" : rate >= 50 ? "warn" : "bad";
 }
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>@ViewData["Title"] - TaskFlow</title><link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/Admin/admin.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/Admin/reports.css" asp-append-version="true" /></head>
-<body class="admin-body"><div class="admin-wrapper" id="adminWrapper">
-<aside class="admin-sidebar" id="adminSidebar"><div class="sidebar-top"><div class="logo-wrap"><a class="brand" href="/"><span class="brand-icon">✓</span><span class="brand-text sidebar-text">TaskFlow</span></a><p class="panel-label sidebar-text">Admin Panel</p></div><div class="sidebar-divider"></div><nav class="side-nav" id="sideNav"><a href="/Admin/Dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Dashboard</span></a><a href="/Admin/Users" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">12</span></a><a href="/Admin/Tasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">48</span></a><a href="/Admin/Categories" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Categories</span></a><a href="/Admin/Reports" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Reports</span></a><div class="sidebar-divider nav-divider"></div><a href="/Admin/Settings" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4-.9-.3a7.9 7.9 0 0 0-.5-1.3l.5-.8-1.4-1.4-.8.5a7.9 7.9 0 0 0-1.3-.5L15 4h-2l-.3.9a7.9 7.9 0 0 0-1.3.5l-.8-.5-1.4 1.4.5.8a7.9 7.9 0 0 0-.5 1.3L4 10v2l.9.3c.1.5.3.9.5 1.3l-.5.8 1.4 1.4.8-.5c.4.2.8.4 1.3.5L10 20h2l.3-.9c.5-.1.9-.3 1.3-.5l.8.5 1.4-1.4-.5-.8c.2-.4.4-.8.5-1.3l.9-.3v-2Z" stroke="currentColor" stroke-width="1.5"/></svg><span class="sidebar-text">Settings</span></a></nav></div><div class="sidebar-bottom"><div class="profile-card"><div class="avatar">A</div><div class="profile-info sidebar-text"><strong>Admin User</strong><span>admin@taskflow.com</span></div><a class="logout-btn" href="/Auth/Login"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8"/></svg></a></div></div><button class="collapse-btn" id="collapseSidebar" type="button">❮</button></aside>
-<section class="admin-main"><header class="topbar"><div><h1>Reports</h1><p id="todayDate"></p></div><div class="topbar-actions"><input type="date" class="mini-date" /><input type="date" class="mini-date" /><button class="ghost-export" id="exportPdf">Export PDF</button></div></header>
-<div class="page-content reports-page">
-<section class="stats-grid"><article class="card"><div class="stat-top"><span>Total Tasks Completed</span><span class="trend success">+8 this week</span></div><h3>41</h3></article><article class="card"><div class="stat-top"><span>Average Completion Time</span></div><h3>3.2 days</h3></article><article class="card"><div class="stat-top"><span>Most Active User</span></div><h3>Sara Miller</h3><small>(12 tasks)</small></article><article class="card"><div class="stat-top"><span>Overdue Rate</span><span class="trend danger">needs attention</span></div><h3>5.4%</h3></article></section>
-<section class="two-col"><article class="card"><h2>Task Completion Over Time</h2><svg id="lineChart" viewBox="0 0 520 220" preserveAspectRatio="none"><g stroke="#1e293b"><line x1="40" y1="20" x2="40" y2="180"/><line x1="40" y1="180" x2="500" y2="180"/><line x1="40" y1="140" x2="500" y2="140"/><line x1="40" y1="100" x2="500" y2="100"/><line x1="40" y1="60" x2="500" y2="60"/></g><polyline id="reportPolyline" points="70,142 170,123 270,100 370,66 470,49" fill="none" stroke="#3b82f6" stroke-width="3"/><g fill="#3b82f6"><circle cx="70" cy="142" r="4"/><circle cx="170" cy="123" r="4"/><circle cx="270" cy="100" r="4"/><circle cx="370" cy="66" r="4"/><circle cx="470" cy="49" r="4"/></g><g fill="#64748b" font-size="10"><text x="64" y="197">Jan</text><text x="164" y="197">Feb</text><text x="264" y="197">Mar</text><text x="364" y="197">Apr</text><text x="464" y="197">May</text></g></svg></article><article class="card"><h2>Tasks by Category</h2><div class="status-bars"><div class="bar-row"><span>Backend</span><div class="bar-track"><div class="bar-fill green" data-width="88.8%"></div></div><strong>32</strong></div><div class="bar-row"><span>Frontend</span><div class="bar-track"><div class="bar-fill blue" data-width="66.6%"></div></div><strong>24</strong></div><div class="bar-row"><span>General</span><div class="bar-track"><div class="bar-fill gray" data-width="100%"></div></div><strong>36</strong></div><div class="bar-row"><span>Design</span><div class="bar-track"><div class="bar-fill purple" data-width="50%"></div></div><strong>18</strong></div><div class="bar-row"><span>Docs</span><div class="bar-track"><div class="bar-fill amber" data-width="27.7%"></div></div><strong>10</strong></div><div class="bar-row"><span>DevOps</span><div class="bar-track"><div class="bar-fill teal" data-width="22.2%"></div></div><strong>8</strong></div><div class="bar-row"><span>Testing</span><div class="bar-track"><div class="bar-fill red" data-width="38.8%"></div></div><strong>14</strong></div></div></article></section>
-<section class="two-col"><article class="card"><h2>User Performance Table</h2><div class="table-wrap"><table><thead><tr><th>User</th><th>Tasks Assigned</th><th>Completed</th><th>Overdue</th><th>Completion Rate</th></tr></thead><tbody><tr><td>Sara Miller</td><td>12</td><td>10</td><td>0</td><td><span class="rate good">83%</span></td></tr><tr><td>John Doe</td><td>14</td><td>9</td><td>2</td><td><span class="rate warn">64%</span></td></tr><tr><td>Lara Bou</td><td>8</td><td>6</td><td>1</td><td><span class="rate warn">75%</span></td></tr><tr><td>Mark Nader</td><td>11</td><td>7</td><td>1</td><td><span class="rate warn">64%</span></td></tr><tr><td>Karim Aziz</td><td>6</td><td>5</td><td>0</td><td><span class="rate good">83%</span></td></tr></tbody></table></div></article>
-<article class="card"><h2>Activity Log</h2><ul class="activity-feed"><li><span class="a-dot green"></span><p>Sara Miller completed "Setup EF Core models"</p><small>1 hour ago</small></li><li><span class="a-dot blue"></span><p>Admin created task "Deploy to Azure"</p><small>3 hours ago</small></li><li><span class="a-dot red"></span><p>"Write API documentation" is now overdue</p><small>5 hours ago</small></li><li><span class="a-dot green"></span><p>Lara Bou completed "User role management"</p><small>Yesterday</small></li><li><span class="a-dot blue"></span><p>Admin added new user "Nour Saad"</p><small>Yesterday</small></li><li><span class="a-dot amber"></span><p>John Doe updated "Design login page"</p><small>2 days ago</small></li><li><span class="a-dot gray"></span><p>Admin created category "Research"</p><small>2 days ago</small></li><li><span class="a-dot red"></span><p>"Fix overdue bug" is now overdue</p><small>3 days ago</small></li></ul></article></section>
-</div></section></div>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Admin/reports.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="adminWrapper">
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-top">
+            <div class="logo-wrap">
+                <a class="brand" href="/">
+                    <span class="brand-icon">✓</span>
+                    <span class="brand-text sidebar-text">TaskFlow</span>
+                </a>
+                <p class="panel-label sidebar-text">Admin Panel</p>
+            </div>
+            <div class="sidebar-divider"></div>
+            <nav class="side-nav" id="sideNav">
+                <a href="/Admin/Dashboard" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="/Admin/Users" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <span class="sidebar-text">Manage Users</span><span class="nav-badge">12</span>
+                </a>
+                <a href="/Admin/Tasks" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">48</span>
+                </a>
+                <a href="/Admin/Categories" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <span class="sidebar-text">Categories</span>
+                </a>
+                <a href="/Admin/Reports" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <span class="sidebar-text">Reports</span>
+                </a>
+                <div class="sidebar-divider nav-divider"></div>
+                <a href="/Admin/Settings" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4-.9-.3a7.9 7.9 0 0 0-.5-1.3l.5-.8-1.4-1.4-.8.5a7.9 7.9 0 0 0-1.3-.5L15 4h-2l-.3.9a7.9 7.9 0 0 0-1.3.5l-.8-.5-1.4 1.4.5.8a7.9 7.9 0 0 0-.5 1.3L4 10v2l.9.3c.1.5.3.9.5 1.3l-.5.8 1.4 1.4.8-.5c.4.2.8.4 1.3.5L10 20h2l.3-.9c.5-.1.9-.3 1.3-.5l.8.5 1.4-1.4-.5-.8c.2-.4.4-.8.5-1.3l.9-.3v-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+                    <span class="sidebar-text">Settings</span>
+                </a>
+            </nav>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="profile-card">
+                <div class="avatar">A</div>
+                <div class="profile-info sidebar-text">
+                    <strong>Admin User</strong>
+                    <span>admin@taskflow.com</span>
+                </div>
+                <a class="logout-btn" href="/Auth/Login">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8"/></svg>
+                </a>
+            </div>
+        </div>
+        <button class="collapse-btn" id="collapseSidebar" type="button">❮</button>
+    </aside>
+
+    <section class="admin-main">
+        <header class="topbar">
+            <div><h1>Reports</h1><p id="todayDate"></p></div>
+            <div class="topbar-actions">
+                <input type="date" class="mini-date" />
+                <input type="date" class="mini-date" />
+                <button class="ghost-export" id="exportPdf">Export PDF</button>
+            </div>
+        </header>
+
+        <div class="page-content reports-page">
+            <section class="stats-grid">
+                <article class="card">
+                    <div class="stat-top">
+                        <span>Total Tasks Completed</span>
+                        <span class="trend success">+@Model.CompletedThisWeek this week</span>
+                    </div>
+                    <h3>@Model.TotalTasksCompleted</h3>
+                </article>
+                <article class="card">
+                    <div class="stat-top"><span>Average Completion Time</span></div>
+                    <h3>@Model.AverageCompletionDays days</h3>
+                </article>
+                <article class="card">
+                    <div class="stat-top"><span>Most Active User</span></div>
+                    <h3>@Model.MostActiveUserName</h3>
+                    <small>(@Model.MostActiveUserTasks tasks)</small>
+                </article>
+                <article class="card">
+                    <div class="stat-top">
+                        <span>Overdue Rate</span>
+                        @if (Model.OverdueRate > 10)
+                        {
+                            <span class="trend danger">needs attention</span>
+                        }
+                        else
+                        {
+                            <span class="trend success">on track</span>
+                        }
+                    </div>
+                    <h3>@Model.OverdueRate%</h3>
+                </article>
+            </section>
+
+            <section class="two-col">
+                <article class="card">
+                    <h2>Task Completion Over Time</h2>
+                    <svg id="lineChart" viewBox="0 0 520 220" preserveAspectRatio="none">
+                        <g stroke="#1e293b">
+                            <line x1="40" y1="20" x2="40" y2="180"/>
+                            <line x1="40" y1="180" x2="500" y2="180"/>
+                            <line x1="40" y1="140" x2="500" y2="140"/>
+                            <line x1="40" y1="100" x2="500" y2="100"/>
+                            <line x1="40" y1="60" x2="500" y2="60"/>
+                        </g>
+                        @if (!string.IsNullOrEmpty(polyPoints))
+                        {
+                            <polyline id="reportPolyline" points="@polyPoints"
+                                      fill="none" stroke="#3b82f6" stroke-width="3"/>
+                            @foreach (var (p, i) in pts.Select((item, index) => (item, index)))
+                            {
+                                <circle cx="@SvgX(i).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)"
+                                        cy="@SvgY(p.Count).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)"
+                                        r="4" fill="#3b82f6"/>
+                            }
+                        }
+                        <g fill="#64748b" font-size="10">
+                            @foreach (var (p, i) in pts.Select((item, index) => (item, index)))
+                            {
+                                var labelX = (SvgX(i) - 6).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+                                @Html.Raw($"<text x=\"{labelX}\" y=\"197\">{p.MonthLabel}</text>")
+                            }
+                        </g>
+                    </svg>
+                </article>
+
+                <article class="card">
+                    <h2>Tasks by Category</h2>
+                    <div class="status-bars">
+                        @if (Model.TasksByCategory.Any())
+                        {
+                            @foreach (var cat in Model.TasksByCategory)
+                            {
+                                <div class="bar-row">
+                                    <span>@cat.CategoryName</span>
+                                    <div class="bar-track">
+                                        <div class="bar-fill blue" data-width="@CatPct(cat.TaskCount)"></div>
+                                    </div>
+                                    <strong>@cat.TaskCount</strong>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>No categories found.</p>
+                        }
+                    </div>
+                </article>
+            </section>
+
+            <section class="two-col">
+                <article class="card" style="grid-column: 1 / -1">
+                    <h2>User Performance Table</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Tasks Assigned</th>
+                                    <th>Completed</th>
+                                    <th>Overdue</th>
+                                    <th>Completion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.UserPerformance.Any())
+                                {
+                                    @foreach (var u in Model.UserPerformance)
+                                    {
+                                        <tr>
+                                            <td>@u.UserName</td>
+                                            <td>@u.TasksAssigned</td>
+                                            <td>@u.Completed</td>
+                                            <td>@u.Overdue</td>
+                                            <td><span class="rate @RateCss(u.CompletionRate)">@u.CompletionRate%</span></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" style="text-align:center">No user data yet.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </section>
+</div>
+
 <div class="toast" id="reportToast">Export feature coming soon!</div>
-<script src="~/js/Admin/admin.js" asp-append-version="true"></script><script src="~/js/Admin/reports.js" asp-append-version="true"></script></body></html>
+<script src="~/js/Admin/admin.js" asp-append-version="true"></script>
+<script src="~/js/Admin/reports.js" asp-append-version="true"></script>
+</body>
+</html>

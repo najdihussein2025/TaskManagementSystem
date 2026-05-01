@@ -11,17 +11,20 @@ public class AdminController : Controller
     private readonly ITaskService _taskService;
     private readonly ICategoryService _categoryService;
     private readonly IDashboardService _dashboardService;
+    private readonly IReportsService _reportsService;
 
     public AdminController(
         IUserService userService,
         ITaskService taskService,
         ICategoryService categoryService,
-        IDashboardService dashboardService)
+        IDashboardService dashboardService,
+        IReportsService reportsService)
     {
         _userService = userService;
         _taskService = taskService;
         _categoryService = categoryService;
         _dashboardService = dashboardService;
+        _reportsService = reportsService;
     }
 
     [HttpGet]
@@ -150,9 +153,10 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public IActionResult Reports()
+    public async Task<IActionResult> Reports()
     {
-        return View();
+        var data = await _reportsService.GetReportsDataAsync();
+        return View(data);
     }
 
     [HttpGet]
