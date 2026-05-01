@@ -43,6 +43,54 @@ namespace TaskManagementSystem.Services
             return (true, token, role, null);
         }
 
+        public async Task<(bool Success, string? Token, string? Role, string? Error)>
+            GoogleLoginAsync(string googleId, string email, string fullName)
+        {
+            // Check if user already exists by GoogleId
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId);
+
+            // If not found by GoogleId, check by email
+            if (user == null)
+            {
+                user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == email);
+
+                if (user != null)
+                {
+                    // Link GoogleId to existing account
+                    user.GoogleId = googleId;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            // If still not found - auto-register new user
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    FullName = fullName,
+                    Email = email,
+                    GoogleId = googleId,
+                    PasswordHash = string.Empty, // no password for Google users
+                    RoleId = 1, // default role = User
+                    Status = UserStatus.Active, // active
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+            }
+
+            if (user.Status == UserStatus.Inactive)
+                return (false, null, null, "Account is inactive.");
+
+            var role = user.RoleId == 2 ? "Admin" : "User";
+            var token = GenerateJwtToken(user, role);
+
+            return (true, token, role, null);
+        }
+
         public async Task<(bool Success, string? Error)>
             RegisterAsync(RegisterDto dto)
         {

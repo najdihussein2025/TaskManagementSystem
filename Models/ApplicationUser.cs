@@ -14,6 +14,8 @@ namespace TaskManagementSystem.Models
 
         public string PasswordHash { get; set; }
 
+        public string? GoogleId { get; set; }  // null for normal users
+
         public UserStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; }

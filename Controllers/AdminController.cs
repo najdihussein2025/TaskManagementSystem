@@ -10,7 +10,7 @@ using TaskManagementSystem.DTOs.User;
 
 namespace TaskManagementSystem.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(AuthenticationSchemes = "JwtBearer", Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly AppDbContext _context;

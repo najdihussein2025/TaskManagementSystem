@@ -20,17 +20,29 @@ namespace TaskManagementSystem.Middleware
         {
             var path = context.Request.Path.Value?.ToLower() ?? "";
 
+            // Skip all auth-related and Google OAuth paths
+            if (path.StartsWith("/auth") ||
+                path.StartsWith("/signin-google") ||
+                path.StartsWith("/signout") ||
+                path == "/" ||
+                path.StartsWith("/css") ||
+                path.StartsWith("/js") ||
+                path.StartsWith("/lib") ||
+                path.StartsWith("/images"))
+            {
+                await _next(context);
+                return;
+            }
+
             bool isAdminRoute = path.StartsWith("/admin");
             bool isUserRoute = path.StartsWith("/user");
 
-            // Skip auth pages and static files
             if (!isAdminRoute && !isUserRoute)
             {
                 await _next(context);
                 return;
             }
 
-            // Try to get and validate JWT from cookie
             var token = context.Request.Cookies["jwt"];
             string? role = null;
             bool isValid = false;
@@ -40,7 +52,7 @@ namespace TaskManagementSystem.Middleware
                 try
                 {
                     var key = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+                                  Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
                     var handler = new JwtSecurityTokenHandler();
 
                     var principal = handler.ValidateToken(token,
@@ -58,28 +70,29 @@ namespace TaskManagementSystem.Middleware
 
                     isValid = true;
                     role = principal.FindFirst(ClaimTypes.Role)?.Value
-                           ?? principal.FindFirst("role")?.Value;
+                       ?? principal.FindFirst("role")?.Value;
 
-                    Console.WriteLine($"[MIDDLEWARE] Path: {path} | Role: {role}");
+                    Console.WriteLine($"[MIDDLEWARE] Path: {path} | Role: {role} | Valid: {isValid}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[MIDDLEWARE] Token invalid: {ex.Message}");
+                    Console.WriteLine($"[MIDDLEWARE] Token error: {ex.Message}");
                     isValid = false;
                 }
             }
+            else
+            {
+                Console.WriteLine($"[MIDDLEWARE] No JWT cookie for path: {path}");
+            }
 
-            // ── Not logged in at all ───────────────────────────────
             if (!isValid)
             {
-                context.Response.Cookies.Delete("jwt");
                 context.Session.SetString("LoginRequired",
                     "Please log in first to access this page.");
                 context.Response.Redirect("/Auth/Login");
                 return;
             }
 
-            // ── Logged in as User trying to access /admin ──────────
             if (isAdminRoute && role != "Admin")
             {
                 context.Session.SetString("LoginRequired",
@@ -88,11 +101,8 @@ namespace TaskManagementSystem.Middleware
                 return;
             }
 
-            // ── Logged in as Admin trying to access /user ──────────
             if (isUserRoute && role != "User")
             {
-                // Admin should not access user dashboard
-                // Redirect admin to their own dashboard
                 context.Response.Redirect("/Admin/Dashboard");
                 return;
             }
