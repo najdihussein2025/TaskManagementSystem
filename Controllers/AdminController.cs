@@ -10,21 +10,25 @@ public class AdminController : Controller
     private readonly IUserService _userService;
     private readonly ITaskService _taskService;
     private readonly ICategoryService _categoryService;
+    private readonly IDashboardService _dashboardService;
 
     public AdminController(
         IUserService userService,
         ITaskService taskService,
-        ICategoryService categoryService)
+        ICategoryService categoryService,
+        IDashboardService dashboardService)
     {
         _userService = userService;
         _taskService = taskService;
         _categoryService = categoryService;
+        _dashboardService = dashboardService;
     }
 
     [HttpGet]
-    public IActionResult Dashboard()
+    public async Task<IActionResult> Dashboard()
     {
-        return View();
+        var data = await _dashboardService.GetDashboardDataAsync();
+        return View(data);
     }
 
     [HttpGet]

@@ -1,6 +1,30 @@
+@model TaskManagementSystem.Dtos.Dashboard.DashboardDto
 @{
     Layout = null;
     ViewData["Title"] = "Admin Dashboard";
+    var data = Model ?? new TaskManagementSystem.Dtos.Dashboard.DashboardDto();
+    var totalUsers = data.TotalUsers;
+    var newUsersThisMonth = data.NewUsersThisMonth;
+    var totalTasks = data.TotalTasks;
+    var newTasksThisMonth = data.NewTasksThisMonth;
+    var totalTasksForBars = data.TotalTasks;
+    var pendingPct = totalTasksForBars > 0 ? (double)data.PendingTasks * 100 / totalTasksForBars : 0;
+    var inProgressPct = totalTasksForBars > 0 ? (double)data.InProgressTasks * 100 / totalTasksForBars : 0;
+    var completedPct = totalTasksForBars > 0 ? (double)data.CompletedTasks * 100 / totalTasksForBars : 0;
+    var overduePct = totalTasksForBars > 0 ? (double)data.OverdueTasks * 100 / totalTasksForBars : 0;
+    // Real progress bar widths for stat cards
+    var userGrowthPct = totalUsers > 0
+                            ? Math.Min((double)newUsersThisMonth / totalUsers * 100, 100)
+                            : 0;
+    var taskGrowthPct = totalTasks > 0
+                            ? Math.Min((double)newTasksThisMonth / totalTasks * 100, 100)
+                            : 0;
+    var inProgressStatPct = totalTasks > 0
+                            ? (double)data.InProgressTasks / totalTasks * 100
+                            : 0;
+    var overdueStatPct = totalTasks > 0
+                            ? (double)data.OverdueTasks / totalTasks * 100
+                            : 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -32,12 +56,12 @@
                     <a href="/Admin/Users" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg>
                         <span class="sidebar-text">Manage Users</span>
-                        <span class="nav-badge">12</span>
+                        <span class="nav-badge">@data.TotalUsers</span>
                     </a>
                     <a href="/Admin/Tasks" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                         <span class="sidebar-text">Manage Tasks</span>
-                        <span class="nav-badge success">48</span>
+                        <span class="nav-badge success">@data.TotalTasks</span>
                     </a>
                     <a href="/Admin/Categories" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -105,27 +129,27 @@
             <div class="page-content">
                 <section class="stats-grid">
                     <article class="card stat-card">
-                        <div class="stat-top"><span>Total Users</span><span class="trend success">+3 new</span></div>
-                        <h3 data-counter="24">0</h3>
-                        <div class="progress"><span style="width:70%; background:#3b82f6;"></span></div>
+                        <div class="stat-top"><span>Total Users</span><span class="trend success">+@data.NewUsersThisMonth new</span></div>
+                        <h3 data-counter="@data.TotalUsers">0</h3>
+                        <div class="progress"><span style="width:@userGrowthPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%; background:#3b82f6;"></span></div>
                         <small>Monthly growth</small>
                     </article>
                     <article class="card stat-card">
-                        <div class="stat-top"><span>Total Tasks</span><span class="trend success">+12</span></div>
-                        <h3 data-counter="148">0</h3>
-                        <div class="progress"><span style="width:85%; background:#22c55e;"></span></div>
+                        <div class="stat-top"><span>Total Tasks</span><span class="trend success">+@data.NewTasksThisMonth</span></div>
+                        <h3 data-counter="@data.TotalTasks">0</h3>
+                        <div class="progress"><span style="width:@taskGrowthPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%; background:#22c55e;"></span></div>
                         <small>Tracked this month</small>
                     </article>
                     <article class="card stat-card">
                         <div class="stat-top"><span>In Progress</span><span class="trend warning">active</span></div>
-                        <h3 data-counter="37">0</h3>
-                        <div class="progress"><span style="width:45%; background:#f59e0b;"></span></div>
+                        <h3 data-counter="@data.InProgressTasks">0</h3>
+                        <div class="progress"><span style="width:@inProgressStatPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%; background:#f59e0b;"></span></div>
                         <small>Open workflow items</small>
                     </article>
                     <article class="card stat-card">
                         <div class="stat-top"><span>Overdue</span><span class="trend danger">urgent</span></div>
-                        <h3 data-counter="8">0</h3>
-                        <div class="progress"><span style="width:20%; background:#ef4444;"></span></div>
+                        <h3 data-counter="@data.OverdueTasks">0</h3>
+                        <div class="progress"><span style="width:@overdueStatPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%; background:#ef4444;"></span></div>
                         <small>Needs immediate attention</small>
                     </article>
                 </section>
@@ -134,10 +158,10 @@
                     <article class="card">
                         <h2>Tasks by Status</h2>
                         <div class="status-bars">
-                            <div class="bar-row"><span>Pending</span><div class="bar-track"><div class="bar-fill blue" data-width="41.9%"></div></div><strong>62</strong></div>
-                            <div class="bar-row"><span>In Progress</span><div class="bar-track"><div class="bar-fill amber" data-width="25.0%"></div></div><strong>37</strong></div>
-                            <div class="bar-row"><span>Completed</span><div class="bar-track"><div class="bar-fill green" data-width="27.7%"></div></div><strong>41</strong></div>
-                            <div class="bar-row"><span>Overdue</span><div class="bar-track"><div class="bar-fill red" data-width="5.4%"></div></div><strong>8</strong></div>
+                            <div class="bar-row"><span>Pending</span><div class="bar-track"><div class="bar-fill blue" data-width="@pendingPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%"></div></div><strong>@data.PendingTasks</strong></div>
+                            <div class="bar-row"><span>In Progress</span><div class="bar-track"><div class="bar-fill amber" data-width="@inProgressPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%"></div></div><strong>@data.InProgressTasks</strong></div>
+                            <div class="bar-row"><span>Completed</span><div class="bar-track"><div class="bar-fill green" data-width="@completedPct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%"></div></div><strong>@data.CompletedTasks</strong></div>
+                            <div class="bar-row"><span>Overdue</span><div class="bar-track"><div class="bar-fill red" data-width="@overduePct.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%"></div></div><strong>@data.OverdueTasks</strong></div>
                         </div>
                     </article>
 
@@ -147,11 +171,21 @@
                             <a href="/Admin/Users">View all &rarr;</a>
                         </div>
                         <ul class="user-list">
-                            <li><span class="user-avatar purple">JD</span><div><strong>John Doe</strong><p>User, 5 tasks</p></div><span class="pill active">Active</span></li>
-                            <li><span class="user-avatar teal">SM</span><div><strong>Sara Miller</strong><p>User, 12 tasks</p></div><span class="pill active">Active</span></li>
-                            <li><span class="user-avatar amber">RK</span><div><strong>Rami Khalil</strong><p>Admin, 3 tasks</p></div><span class="pill inactive">Inactive</span></li>
-                            <li><span class="user-avatar gray">LB</span><div><strong>Lara Bou</strong><p>User, 7 tasks</p></div><span class="pill active">Active</span></li>
-                            <li><span class="user-avatar blue">MN</span><div><strong>Mark Nader</strong><p>User, 9 tasks</p></div><span class="pill active">Active</span></li>
+                            @if (data.RecentUsers.Any())
+                            {
+                                @foreach (var user in data.RecentUsers)
+                                {
+                                    <li>
+                                        <span class="user-avatar blue">@user.Initials</span>
+                                        <div><strong>@user.FullName</strong><p>@user.Role, @user.TaskCount tasks</p></div>
+                                        <span class="pill @(user.IsActive ? "active" : "inactive")">@(user.IsActive ? "Active" : "Inactive")</span>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li><div><strong>No recent users</strong><p>Users will appear here once created.</p></div></li>
+                            }
                         </ul>
                     </article>
                 </section>
@@ -169,11 +203,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>Design login page</td><td>John Doe</td><td>Design</td><td>Apr 30</td><td class="priority-high">High</td><td><span class="status in-progress">In Progress</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
-                                <tr><td>Setup EF Core models</td><td>Sara Miller</td><td>Backend</td><td>May 2</td><td class="priority-high">High</td><td><span class="status completed">Completed</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
-                                <tr><td>Write API documentation</td><td>Rami Khalil</td><td>Docs</td><td>Apr 28</td><td class="priority-medium">Medium</td><td><span class="status overdue">Overdue</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
-                                <tr><td>Implement JWT auth</td><td>Lara Bou</td><td>Backend</td><td>May 5</td><td class="priority-high">High</td><td><span class="status pending">Pending</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
-                                <tr><td>Connect frontend to API</td><td>John Doe</td><td>Frontend</td><td>May 8</td><td class="priority-low">Low</td><td><span class="status pending">Pending</span></td><td><button class="action-btn edit">Edit</button><button class="action-btn delete">Delete</button></td></tr>
+                                @if (data.RecentTasks.Any())
+                                {
+                                    @foreach (var task in data.RecentTasks)
+                                    {
+                                        var priorityCss = task.Priority.ToLowerInvariant() switch
+                                        {
+                                            "high" => "priority-high",
+                                            "medium" => "priority-medium",
+                                            "low" => "priority-low",
+                                            "urgent" => "priority-high",
+                                            _ => "priority-low"
+                                        };
+                                        var statusCss = task.Status switch
+                                        {
+                                            "InProgress" => "in-progress",
+                                            "Completed" => "completed",
+                                            "Pending" => "pending",
+                                            "Cancelled" => "overdue",
+                                            _ => "pending"
+                                        };
+                                        var statusText = task.Status == "InProgress" ? "In Progress" : task.Status;
+                                        <tr>
+                                            <td>@task.Title</td>
+                                            <td>@task.AssignedToName</td>
+                                            <td>@task.CategoryName</td>
+                                            <td>@task.DueDate.ToString("MMM d")</td>
+                                            <td class="@priorityCss">@task.Priority</td>
+                                            <td><span class="status @statusCss">@statusText</span></td>
+                                            <td><a class="action-btn edit" href="/Admin/Tasks">View</a></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" style="text-align:center;">No recent tasks found.</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>

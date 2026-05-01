@@ -5,7 +5,7 @@ using TaskManagementSystem.Models;
 using TaskPriority = TaskManagementSystem.Enums.TaskPriority;
 using TaskStatus = TaskManagementSystem.Enums.TaskStatus;
 
-namespace TaskManager.Repositories
+namespace TaskManagementSystem.Repositories
 {
     public class TaskRepository : ITaskRepository
     {
@@ -19,7 +19,7 @@ namespace TaskManager.Repositories
         public async Task<IEnumerable<TaskItem>> GetAllAsync()
         {
             return await _context.Tasks
-                .Include(t => t.AssignedTo)
+                .Include(t => t.AssignedToUser)
                 .Include(t => t.Category)
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
@@ -28,7 +28,7 @@ namespace TaskManager.Repositories
         public async Task<TaskItem?> GetByIdAsync(int id)
         {
             return await _context.Tasks
-                .Include(t => t.AssignedTo)
+                .Include(t => t.AssignedToUser)
                 .Include(t => t.Category)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
@@ -36,7 +36,7 @@ namespace TaskManager.Repositories
         public async Task<IEnumerable<TaskItem>> GetByUserIdAsync(int userId)
         {
             return await _context.Tasks
-                .Include(t => t.AssignedTo)
+                .Include(t => t.AssignedToUser)
                 .Include(t => t.Category)
                 .Where(t => t.AssignedToUserId == userId)
                 .OrderByDescending(t => t.CreatedAt)
@@ -51,7 +51,7 @@ namespace TaskManager.Repositories
             int? userId)
         {
             var query = _context.Tasks
-                .Include(t => t.AssignedTo)
+                .Include(t => t.AssignedToUser)
                 .Include(t => t.Category)
                 .AsQueryable();
  
@@ -68,7 +68,7 @@ namespace TaskManager.Repositories
  
             // Filter by priority enum
             if (!string.IsNullOrWhiteSpace(priority) &&
-                Enum.TryParse<PriorityLevel>(priority, out var parsedPriority))
+                Enum.TryParse<TaskPriority>(priority, out var parsedPriority))
                 query = query.Where(t => t.Priority == parsedPriority);
  
             // Filter by category
@@ -92,7 +92,6 @@ namespace TaskManager.Repositories
  
         public async Task UpdateAsync(TaskItem task)
         {
-            task.UpdatedAt = DateTime.UtcNow;
             _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
         }
