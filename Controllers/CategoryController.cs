@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Interfaces.Services;
 using TaskManagementSystem.DTOs.Category;
 
 namespace TaskManagementSystem.Controllers{
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller{
         private readonly ICategoryService _categoryService;
 

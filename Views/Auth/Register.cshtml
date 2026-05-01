@@ -1,3 +1,4 @@
+@model TaskManagementSystem.DTOs.Auth.RegisterDto
 @{
     Layout = null;
     ViewData["Title"] = "Register";
@@ -17,23 +18,29 @@
             <div class="auth-form-wrap">
                 <div class="auth-card auth-card-wide">
                     <h2>Create Account</h2>
-                    <form id="registerForm" class="auth-form" novalidate>
+                    @if (ViewBag.Error is string err && !string.IsNullOrEmpty(err))
+                    {
+                        <p class="field-error" role="alert">@err</p>
+                    }
+                    <form asp-controller="Auth" asp-action="Register" method="post" class="auth-form" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="field-error"></div>
                         <div class="form-group">
-                            <label for="registerName">Full Name</label>
-                            <input id="registerName" name="fullName" type="text" placeholder="John Doe" autocomplete="name" />
-                            <small class="field-error" data-error-for="registerName"></small>
+                            <label asp-for="FullName">Full Name</label>
+                            <input asp-for="FullName" id="registerName" type="text" placeholder="John Doe" autocomplete="name" />
+                            <span asp-validation-for="FullName" class="field-error"></span>
                         </div>
 
                         <div class="form-group">
-                            <label for="registerEmail">Email</label>
-                            <input id="registerEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
-                            <small class="field-error" data-error-for="registerEmail"></small>
+                            <label asp-for="Email">Email</label>
+                            <input asp-for="Email" id="registerEmail" type="email" placeholder="you@example.com" autocomplete="email" />
+                            <span asp-validation-for="Email" class="field-error"></span>
                         </div>
 
                         <div class="form-group">
-                            <label for="registerPassword">Password</label>
+                            <label asp-for="Password">Password</label>
                             <div class="password-wrap">
-                                <input id="registerPassword" name="password" type="password" placeholder="••••••••" autocomplete="new-password" />
+                                <input asp-for="Password" id="registerPassword" type="password" placeholder="••••••••" autocomplete="new-password" />
                                 <button class="password-toggle" type="button" data-toggle-password="registerPassword" aria-label="Show password">
                                     <span class="eye"></span>
                                 </button>
@@ -42,18 +49,18 @@
                                 <span class="meter-bar"><span id="passwordStrengthBar"></span></span>
                                 <strong id="passwordStrengthText">Weak</strong>
                             </div>
-                            <small class="field-error" data-error-for="registerPassword"></small>
+                            <span asp-validation-for="Password" class="field-error"></span>
                         </div>
 
                         <div class="form-group">
-                            <label for="registerConfirmPassword">Confirm Password</label>
+                            <label asp-for="ConfirmPassword">Confirm Password</label>
                             <div class="password-wrap">
-                                <input id="registerConfirmPassword" name="confirmPassword" type="password" placeholder="••••••••" autocomplete="new-password" />
+                                <input asp-for="ConfirmPassword" id="registerConfirmPassword" type="password" placeholder="••••••••" autocomplete="new-password" />
                                 <button class="password-toggle" type="button" data-toggle-password="registerConfirmPassword" aria-label="Show password">
                                     <span class="eye"></span>
                                 </button>
                             </div>
-                            <small class="field-error" data-error-for="registerConfirmPassword"></small>
+                            <span asp-validation-for="ConfirmPassword" class="field-error"></span>
                         </div>
 
                         <div class="form-group form-check">
@@ -63,14 +70,12 @@
                                     I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
                                 </span>
                             </label>
-                            <small class="field-error" data-error-for="termsCheckbox"></small>
                         </div>
 
                         <button class="submit-btn" type="submit">
                             <span class="btn-text">Create Account &rarr;</span>
                             <span class="spinner" aria-hidden="true"></span>
                         </button>
-                        <p class="success-message" data-success-for="registerForm">Account created! Please sign in.</p>
                     </form>
                 </div>
 

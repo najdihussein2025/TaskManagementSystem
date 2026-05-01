@@ -4,9 +4,8 @@ namespace TaskManagementSystem.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<bool> RegisterAsync(RegisterDto dto);
-        Task<bool> LoginAsync(LoginDto dto);
-        Task LogoutAsync();
-        Task<bool> ChangePasswordAsync(ChangePasswordDto dto);
+        Task<(bool Success, string? Token, string? Role, string? Error)> LoginAsync(LoginDto dto);
+        Task<(bool Success, string? Error)> RegisterAsync(RegisterDto dto);
+        Task<(bool Success, string? Error)> ChangePasswordAsync(int userId, ChangePasswordDto dto);
     }
 }

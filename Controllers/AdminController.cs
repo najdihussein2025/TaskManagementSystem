@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Dtos.Settings;
 using TaskManagementSystem.DTOs.Task;
+using TaskManagementSystem.Extensions;
 using TaskManagementSystem.Interfaces.Services;
 using TaskManagementSystem.DTOs.User;
 
 namespace TaskManagementSystem.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly IUserService _userService;
@@ -166,9 +169,9 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Settings()
     {
-        // Get logged-in admin user ID from session
-        var userId = HttpContext.Session.GetInt32("UserId");
-        if (userId == null) return RedirectToAction("Login", "Auth");
+        var userId = User.GetUserId();
+        if (userId is null)
+            return RedirectToAction("Login", "Auth");
 
         var profile = await _settingsService.GetAdminProfileAsync(userId.Value);
         if (profile == null) return RedirectToAction("Login", "Auth");
@@ -183,8 +186,9 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Settings(UpdateProfileDto dto)
     {
-        var userId = HttpContext.Session.GetInt32("UserId");
-        if (userId == null) return RedirectToAction("Login", "Auth");
+        var userId = User.GetUserId();
+        if (userId is null)
+            return RedirectToAction("Login", "Auth");
 
         var (success, message) = await _settingsService.UpdateProfileAsync(userId.Value, dto);
 

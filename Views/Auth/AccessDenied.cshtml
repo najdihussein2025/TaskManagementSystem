@@ -1,0 +1,22 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Access denied";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+    <main class="auth-layout" style="justify-content:center;padding:2rem;">
+        <div class="auth-card" style="max-width:420px;text-align:center;">
+            <h1>Access denied</h1>
+            <p>You do not have permission to view this page.</p>
+            <p><a href="/">Go home</a> &middot; <a href="/Auth/Login">Sign in</a></p>
+        </div>
+    </main>
+</body>
+</html>
