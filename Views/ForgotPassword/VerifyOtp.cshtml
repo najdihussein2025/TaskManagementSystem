@@ -1,0 +1,78 @@
+@model TaskManagementSystem.DTOs.Auth.VerifyOtpDto
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Code - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Auth/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+<main class="auth-layout">
+    <section class="auth-info auth-info-left">
+        <div class="auth-info-inner">
+            <a href="/Home/Index" class="brand" aria-label="TaskFlow home">
+                <span class="brand-icon">✓</span>
+                <span class="brand-text">TaskFlow</span>
+            </a>
+            <div class="info-content">
+                <h1>Check your email</h1>
+                <p>We sent a 6-digit code to your email address.</p>
+                <ul class="feature-list">
+                    <li><span class="check-icon">✓</span>Enter the exact OTP code</li>
+                    <li><span class="check-icon">✓</span>Code expires in 10 minutes</li>
+                    <li><span class="check-icon">✓</span>Request a new code anytime</li>
+                </ul>
+            </div>
+            <p class="switch-auth">
+                Need another code?
+                <a href="/ForgotPassword">&larr; Resend Code</a>
+            </p>
+        </div>
+    </section>
+
+    <section class="auth-form-panel">
+        <div class="auth-form-wrap">
+            <div class="auth-card">
+                <h2>Enter Verification Code</h2>
+                <p class="auth-sub">
+                    Code sent to <strong>@(ViewBag.Email ?? Model?.Email)</strong>
+                </p>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="login-error"><span>⚠</span>@ViewBag.Error</div>
+                }
+                @if (ViewBag.Message != null)
+                {
+                    <div class="login-success"><span>✓</span>@ViewBag.Message</div>
+                }
+                @if (TempData["FlowError"] != null)
+                {
+                    <div class="login-error">⚠ @TempData["FlowError"]</div>
+                }
+
+                <form method="post" asp-action="VerifyOtp" asp-controller="ForgotPassword" class="auth-form" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Email" value="@(ViewBag.Email ?? Model?.Email)" />
+
+                    <div class="form-group">
+                        <label for="otpCode">6-Digit Code</label>
+                        <input id="otpCode" type="text" name="OtpCode" value="@Model?.OtpCode" placeholder="123456" maxlength="6" inputmode="numeric" autocomplete="one-time-code" required />
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">Verify Code &rarr;</span>
+                        <span class="spinner" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+            <p class="bottom-link">
+                <a href="/ForgotPassword">&larr; Resend Code</a>
+            </p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

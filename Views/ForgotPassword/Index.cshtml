@@ -1,0 +1,78 @@
+@model TaskManagementSystem.DTOs.Auth.ForgotPasswordDto
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forgot Password - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Auth/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+<main class="auth-layout">
+    <section class="auth-info auth-info-left">
+        <div class="auth-info-inner">
+            <a href="/Home/Index" class="brand" aria-label="TaskFlow home">
+                <span class="brand-icon">✓</span>
+                <span class="brand-text">TaskFlow</span>
+            </a>
+            <div class="info-content">
+                <h1>Reset your password</h1>
+                <p>Enter your email and we will send you a 6-digit code.</p>
+                <ul class="feature-list">
+                    <li><span class="check-icon">✓</span>Secure OTP verification</li>
+                    <li><span class="check-icon">✓</span>Code expires in 10 minutes</li>
+                    <li><span class="check-icon">✓</span>Fast and safe account recovery</li>
+                </ul>
+            </div>
+            <p class="switch-auth">
+                Remember your password?
+                <a href="/Auth/Login">Back to Login &rarr;</a>
+            </p>
+        </div>
+    </section>
+
+    <section class="auth-form-panel">
+        <div class="auth-form-wrap">
+            <div class="auth-card">
+                <h2>Forgot Password</h2>
+                <p class="auth-sub">Enter your registered email address</p>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="login-error"><span>⚠</span>@ViewBag.Error</div>
+                }
+                @if (TempData["Message"] != null)
+                {
+                    <div class="login-success"><span>✓</span>@TempData["Message"]</div>
+                }
+                @if (TempData["FlowError"] != null)
+                {
+                    <div class="login-error">⚠ @TempData["FlowError"]</div>
+                }
+                @if (TempData["Success"] != null)
+                {
+                    <div class="login-success">✓ @TempData["Success"]</div>
+                }
+
+                <form method="post" asp-action="Index" asp-controller="ForgotPassword" class="auth-form" novalidate>
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input id="email" type="email" name="Email" value="@Model?.Email" placeholder="you@example.com" autocomplete="email" required />
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">Send Reset Code &rarr;</span>
+                        <span class="spinner" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+            <p class="bottom-link">
+                <a href="/Auth/Login">&larr; Back to Login</a>
+            </p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

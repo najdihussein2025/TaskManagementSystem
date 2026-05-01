@@ -15,6 +15,7 @@ namespace TaskManagementSystem.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<TaskComment> Comments { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +56,12 @@ namespace TaskManagementSystem.Data
                 .WithMany(user => user.Comments)
                 .HasForeignKey(comment => comment.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasOne(token => token.User)
+                .WithMany()
+                .HasForeignKey(token => token.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
