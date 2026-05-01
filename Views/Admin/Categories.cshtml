@@ -34,15 +34,17 @@
                 <a href="/Admin/Users" class="nav-item">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Manage Users</span>
+                    <span class="nav-badge">@ViewBag.SidebarUserCount</span>
                 </a>
                 <a href="/Admin/Tasks" class="nav-item">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Manage Tasks</span>
+                    <span class="nav-badge success">@ViewBag.SidebarTaskCount</span>
                 </a>
                 <a href="/Category" class="nav-item active">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8" /></svg>
                     <span class="sidebar-text">Categories</span>
-                    <span class="nav-badge">@totalCategories</span>
+                    <span class="nav-badge">@ViewBag.SidebarCategoryCount</span>
                 </a>
                 <a href="/Admin/Reports" class="nav-item">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8" /></svg>
@@ -77,11 +79,10 @@
             </div>
             <div class="topbar-actions">
                 <button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button>
-                <button class="btn-primary" id="catQuickAdd">+ Add Category</button>
                 <div class="dropdown-wrap">
                     <button class="avatar-btn" id="avatarBtn" type="button">A</button>
                     <div class="dropdown-menu profile-menu" id="profileMenu">
-                        <a href="#">My Profile</a>
+                        <a href="/Admin/Settings">My Profile</a>
                         <a href="/Auth/Logout">Logout</a>
                     </div>
                 </div>
@@ -119,7 +120,7 @@
                                             <td><span class="dot" style="background:@dotColor"></span></td>
                                             <td>@(string.IsNullOrWhiteSpace(category.Name) ? "-" : category.Name)</td>
                                             <td>@(string.IsNullOrWhiteSpace(category.Description) ? "-" : category.Description)</td>
-                                            <td><span class="count-badge">-</span></td>
+                                            <td><span class="count-badge">@category.TaskCount</span></td>
                                             <td>
                                                 <button class="action-btn edit-cat" type="button">Edit</button>
                                                 <form method="post" action="/Category/Delete" style="display:inline;" onsubmit="return confirm('Delete this category?');">
@@ -168,11 +169,11 @@
                 </article>
                 <article class="card">
                     <h4>Most Used</h4>
-                    <strong>-</strong>
+                    <strong>@ViewBag.MostUsedCategory</strong>
                 </article>
                 <article class="card">
                     <h4>Least Used</h4>
-                    <strong>-</strong>
+                    <strong>@ViewBag.LeastUsedCategory</strong>
                 </article>
             </section>
         </div>

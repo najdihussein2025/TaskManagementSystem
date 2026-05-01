@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem.Data;
 using TaskManagementSystem.Dtos.Settings;
 using TaskManagementSystem.DTOs.Task;
 using TaskManagementSystem.Extensions;
@@ -11,6 +13,7 @@ namespace TaskManagementSystem.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
+    private readonly AppDbContext _context;
     private readonly IUserService _userService;
     private readonly ITaskService _taskService;
     private readonly ICategoryService _categoryService;
@@ -19,6 +22,7 @@ public class AdminController : Controller
     private readonly ISettingsService _settingsService;
 
     public AdminController(
+        AppDbContext context,
         IUserService userService,
         ITaskService taskService,
         ICategoryService categoryService,
@@ -26,6 +30,7 @@ public class AdminController : Controller
         IReportsService reportsService,
         ISettingsService settingsService)
     {
+        _context = context;
         _userService = userService;
         _taskService = taskService;
         _categoryService = categoryService;
@@ -37,6 +42,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
+        await SetSidebarCountsAsync();
         var data = await _dashboardService.GetDashboardDataAsync();
         return View(data);
     }
@@ -44,6 +50,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Users(string? search, string? status)
     {
+        await SetSidebarCountsAsync();
         var users = await _userService.GetAllAsync(search, status);
         return View(users);
     }
@@ -77,6 +84,7 @@ public class AdminController : Controller
         int? categoryId,
         int? userId)
     {
+        await SetSidebarCountsAsync();
         var filter = new TaskFilterDto
         {
             Search = search,
@@ -154,14 +162,16 @@ public class AdminController : Controller
     
 
     [HttpGet]
-    public IActionResult Categories()
+    public async Task<IActionResult> Categories()
     {
+        await SetSidebarCountsAsync();
         return RedirectToAction("Index", "Category");
     }
 
     [HttpGet]
     public async Task<IActionResult> Reports()
     {
+        await SetSidebarCountsAsync();
         var data = await _reportsService.GetReportsDataAsync();
         return View(data);
     }
@@ -169,6 +179,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Settings()
     {
+        await SetSidebarCountsAsync();
         var userId = User.GetUserId();
         if (userId is null)
             return RedirectToAction("Login", "Auth");
@@ -198,5 +209,12 @@ public class AdminController : Controller
             TempData["ErrorMessage"] = message;
 
         return RedirectToAction(nameof(Settings));
+    }
+
+    private async Task SetSidebarCountsAsync()
+    {
+        ViewBag.SidebarUserCount = await _context.Users.CountAsync();
+        ViewBag.SidebarTaskCount = await _context.Tasks.CountAsync();
+        ViewBag.SidebarCategoryCount = await _context.Categories.CountAsync();
     }
 }

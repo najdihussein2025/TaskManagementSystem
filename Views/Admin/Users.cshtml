@@ -26,8 +26,8 @@
                 <div class="sidebar-divider"></div>
                 <nav class="side-nav" id="sideNav">
                     <a href="/Admin/Dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Dashboard</span></a>
-                    <a href="/Admin/Users" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">@Model.Count</span></a>
-                    <a href="/Admin/Tasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">48</span></a>
+                    <a href="/Admin/Users" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Manage Users</span><span class="nav-badge">@ViewBag.SidebarUserCount</span></a>
+                    <a href="/Admin/Tasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sidebar-text">Manage Tasks</span><span class="nav-badge success">@ViewBag.SidebarTaskCount</span></a>
                     <a href="/Admin/Categories" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M6 7V5h12v2m-1 0v12H7V7" stroke="currentColor" stroke-width="1.8"/></svg><span class="sidebar-text">Categories</span></a>
                     <a href="/Admin/Reports" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14 6-6 4 4 6-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sidebar-text">Reports</span></a>
                     <div class="sidebar-divider nav-divider"></div>
@@ -40,7 +40,7 @@
         <section class="admin-main">
             <header class="topbar">
                 <div><h1>Manage Users</h1><p id="todayDate"></p></div>
-                <div class="topbar-actions"><button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button><div class="search-wrap"><input type="text" placeholder="Search users..." /></div><div class="dropdown-wrap"><button class="icon-btn" id="notifBtn" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8"/></svg><span class="dot-badge">3</span></button><div class="dropdown-menu" id="notifMenu"><p>User request received.</p><p>New user signed up.</p><p>Backup completed.</p></div></div><div class="dropdown-wrap"><button class="avatar-btn" id="avatarBtn" type="button">A</button><div class="dropdown-menu profile-menu" id="profileMenu"><a href="#">My Profile</a><a href="/Auth/Logout">Logout</a></div></div></div>
+                <div class="topbar-actions"><button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button><div class="dropdown-wrap"><button class="avatar-btn" id="avatarBtn" type="button">A</button><div class="dropdown-menu profile-menu" id="profileMenu"><a href="/Admin/Settings">My Profile</a><a href="/Auth/Logout">Logout</a></div></div></div>
             </header>
 
             <div class="page-content users-page">

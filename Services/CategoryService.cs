@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem.Data;
 using TaskManagementSystem.Interfaces.Services;
 using TaskManagementSystem.Interfaces.Repositories;
 using TaskManagementSystem.Models;
@@ -6,10 +8,12 @@ using TaskManagementSystem.DTOs.Category;
 namespace TaskManagementSystem.Services{
     public class CategoryService : ICategoryService{
 
+        private readonly AppDbContext _context;
         private readonly ICategoryRepository _categoryRepository;
 
-        public CategoryService(ICategoryRepository categoryRepository)
+        public CategoryService(AppDbContext context, ICategoryRepository categoryRepository)
         {
+            _context = context;
             _categoryRepository = categoryRepository;
         }
 
@@ -35,14 +39,16 @@ namespace TaskManagementSystem.Services{
         }
         public async Task<List<CategoryDto>> GetAllAsync()
         {
-            var categories = await _categoryRepository.GetAllAsync();
-            return categories.Select(c => new CategoryDto
+            return await _context.Categories
+                .Select(c => new CategoryDto
             {
                 Id = c.Id,
                 Name = c.Name,
                 Description = c.Description,
-                Color = c.Color
-            }).ToList();
+                Color = c.Color,
+                TaskCount = _context.Tasks.Count(t => t.CategoryId == c.Id)
+            })
+                .ToListAsync();
 
         }
         public async Task<CategoryDto?> GetByIdAsync(int id)

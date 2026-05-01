@@ -32,7 +32,7 @@ namespace TaskManagementSystem.Services
                 return (false, null, null, "Invalid email or password.");
 
             if ((int)user.Status != 1)
-                return (false, null, null, "Account is inactive.");
+                return (false, null, null, "User is inactive. Contact admin.");
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return (false, null, null, "Invalid email or password.");

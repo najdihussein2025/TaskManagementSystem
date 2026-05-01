@@ -71,7 +71,7 @@ namespace TaskManagementSystem.Controllers
 
             if (!success)
             {
-                ViewBag.Error = "Invalid email or password. Please try again.";
+                ViewBag.Error = error ?? "Invalid email or password. Please try again.";
                 return View(dto);
             }
 
