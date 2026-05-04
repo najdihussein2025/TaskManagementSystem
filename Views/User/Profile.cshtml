@@ -1,6 +1,23 @@
+@model TaskManagementSystem.DTOs.User.UserProfileDto
 @{
     Layout = null;
     ViewData["Title"] = "My Profile";
+
+    var userName = Model?.FullName ?? "User";
+    var userEmail = Model?.Email ?? "";
+    var userRole = Model?.RoleName ?? "User";
+    var memberSince = Model?.CreatedAt ?? DateTime.UtcNow;
+
+    var userInitials = string.IsNullOrEmpty(userName) ? "U" :
+        (userName.Split(' ').Length > 1 ?
+         $"{userName.Split(' ')[0][0]}{userName.Split(' ')[1][0]}" :
+         userName.Substring(0, 2).ToUpper());
+
+    var totalTasks = ViewBag.TotalTasks ?? 0;
+    var completedTasks = ViewBag.CompletedTasks ?? 0;
+    var inProgressTasks = ViewBag.InProgressTasks ?? 0;
+    var overdueTasks = ViewBag.OverdueTasks ?? 0;
+    var completionRate = totalTasks > 0 ? (completedTasks * 100 / totalTasks) : 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -28,8 +45,16 @@
                     <a href="/Auth/Logout" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="sidebar-text">Logout</span></a>
                 </nav>
             </div>
-            <div class="sidebar-bottom"><div class="profile-card"><div class="avatar">JD</div><div class="profile-info sidebar-text"><strong>John Doe</strong><span>john@email.com</span></div></div></div>
-            <button class="collapse-btn" id="collapseSidebar" type="button" aria-label="Toggle sidebar">❮</button>
+            <div class="sidebar-bottom">
+                <div class="profile-card">
+                    <div class="avatar">@userInitials</div>
+                    <div class="profile-info sidebar-text">
+                        <strong>@userName</strong>
+                        <span>@userEmail</span>
+                    </div>
+                </div>
+            </div>
+            <button class="collapse-btn" id="collapseSidebar" type="button">❮</button>
         </aside>
 
         <section class="user-main">
@@ -37,24 +62,43 @@
                 <div><h1>My Profile</h1><p id="todayDate"></p></div>
                 <div class="topbar-actions">
                     <button class="hamburger-btn" id="mobileMenuBtn" type="button">☰</button>
-                    <div class="search-wrap"><input type="text" placeholder="Search tasks..." /></div>
-                    <div class="dropdown-wrap"><button class="icon-btn" id="notifBtn" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8" /></svg><span class="dot-badge">2</span></button><div class="dropdown-menu" id="notifMenu"><p>2 recent activity updates.</p><p>Password reminder available.</p></div></div>
-                    <div class="dropdown-wrap"><button class="avatar-btn" id="avatarBtn" type="button">JD</button><div class="dropdown-menu profile-menu" id="profileMenu"><a href="/User/Profile">My Profile</a><a href="/Auth/Logout">Logout</a></div></div>
+                    <div class="dropdown-wrap">
+                        <button class="avatar-btn" id="avatarBtn" type="button">@userInitials</button>
+                        <div class="dropdown-menu profile-menu" id="profileMenu">
+                            <a href="/User/Profile">My Profile</a>
+                            <a href="/Auth/Logout">Logout</a>
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <div class="page-content profile-page">
+                @if (TempData["Success"] != null)
+                {
+                    <div style="background:rgba(34,197,94,0.1); border:1px solid #22c55e; padding:10px; border-radius:8px; margin-bottom:15px; color:#22c55e;">
+                        @TempData["Success"]
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; padding:10px; border-radius:8px; margin-bottom:15px; color:#ef4444;">
+                        @TempData["Error"]
+                    </div>
+                }
+
                 <section class="profile-grid">
                     <div class="left-column">
                         <article class="card">
                             <h2>Personal Information</h2>
                             <div class="profile-avatar-wrap">
-                                <div class="big-avatar">JD</div>
-                                <a href="#">Change Photo</a>
+                                <div class="big-avatar">@userInitials</div>
                             </div>
-                            <form class="profile-form">
-                                <label>Full Name<input type="text" value="John Doe" /></label>
-                                <label>Email<input type="text" value="john@email.com" disabled /></label>
+                            <form class="profile-form" method="post" action="/User/UpdateProfile">
+                                @Html.AntiForgeryToken()
+                                <label>Full Name</label>
+                                <input type="text" name="FullName" value="@userName" required />
+                                <label>Email</label>
+                                <input type="email" value="@userEmail" disabled />
                                 <p class="muted-note">Email cannot be changed. Contact admin.</p>
                                 <button class="btn-primary" type="submit">Update Info</button>
                             </form>
@@ -63,31 +107,18 @@
                         <article class="card">
                             <div class="card-head">
                                 <h2>Change Password</h2>
-                                <div class="section-tabs">
-                                    <button class="tab-btn active" data-tab="passwordSection" type="button">Password</button>
-                                    <button class="tab-btn" data-tab="passwordSection" type="button">Security</button>
-                                </div>
                             </div>
-                            <form class="profile-form section-panel active" id="passwordSection">
-                                <label>Current Password
-                                    <div class="password-wrap">
-                                        <input type="password" id="currentPassword" />
-                                        <button type="button" class="toggle-pass" data-target="currentPassword">Show</button>
-                                    </div>
-                                </label>
-                                <label>New Password
-                                    <div class="password-wrap">
-                                        <input type="password" id="newPassword" />
-                                        <button type="button" class="toggle-pass" data-target="newPassword">Show</button>
-                                    </div>
-                                </label>
-                                <div class="strength-wrap"><span>Strength: Medium</span><div class="strength-bar"><div class="strength-fill"></div></div></div>
-                                <label>Confirm Password
-                                    <div class="password-wrap">
-                                        <input type="password" id="confirmPassword" />
-                                        <button type="button" class="toggle-pass" data-target="confirmPassword">Show</button>
-                                    </div>
-                                </label>
+                            <form class="profile-form" method="post" action="/User/ChangePassword">
+                                @Html.AntiForgeryToken()
+                                <label>Current Password</label>
+                                <input type="password" name="CurrentPassword" required />
+
+                                <label>New Password</label>
+                                <input type="password" name="NewPassword" required minlength="6" />
+
+                                <label>Confirm Password</label>
+                                <input type="password" name="ConfirmPassword" required />
+
                                 <button class="btn-primary" type="submit">Update Password</button>
                             </form>
                         </article>
@@ -97,34 +128,24 @@
                         <article class="card">
                             <h3>My Activity</h3>
                             <div class="stats-grid">
-                                <div class="mini-stat"><span>Tasks Assigned</span><strong>23</strong></div>
-                                <div class="mini-stat"><span>Completed</span><strong>14</strong></div>
-                                <div class="mini-stat"><span>In Progress</span><strong>6</strong></div>
-                                <div class="mini-stat"><span>Overdue</span><strong>3</strong></div>
+                                <div class="mini-stat"><span>Tasks Assigned</span><strong>@totalTasks</strong></div>
+                                <div class="mini-stat"><span>Completed</span><strong>@completedTasks</strong></div>
+                                <div class="mini-stat"><span>In Progress</span><strong>@inProgressTasks</strong></div>
+                                <div class="mini-stat"><span>Overdue</span><strong>@overdueTasks</strong></div>
                             </div>
-                            <div class="completion-row"><span>Overall Completion Rate</span><strong>60%</strong></div>
-                            <div class="completion-bar"><div class="completion-fill"></div></div>
+                            <div class="completion-row"><span>Overall Completion Rate</span><strong>@completionRate%</strong></div>
+                            <div class="completion-bar">
+                                <div class="completion-fill" style="width: @completionRate%;"></div>
+                            </div>
                         </article>
 
                         <article class="card">
                             <h3>Account Details</h3>
                             <div class="detail-list">
-                                <p><span>Role:</span><strong>User</strong></p>
-                                <p><span>Member Since:</span><strong>January 2025</strong></p>
-                                <p><span>Last Login:</span><strong>April 29, 2026</strong></p>
+                                <p><span>Role:</span><strong>@userRole</strong></p>
+                                <p><span>Member Since:</span><strong>@memberSince.ToString("MMMM yyyy")</strong></p>
                                 <p><span>Account Status:</span><strong class="status completed">Active</strong></p>
-                                <p><span>Tasks This Month:</span><strong>5</strong></p>
                             </div>
-                        </article>
-
-                        <article class="card">
-                            <h3>Recent Activity</h3>
-                            <ul class="activity-list">
-                                <li><span class="dot green"></span><div><p>Completed "Setup EF Core models"</p><small>1 hour ago</small></div></li>
-                                <li><span class="dot blue"></span><div><p>Updated "Design login page"</p><small>Yesterday</small></div></li>
-                                <li><span class="dot amber"></span><div><p>Due date approaching: "JWT auth"</p><small>Yesterday</small></div></li>
-                                <li><span class="dot red"></span><div><p>Overdue: "Fix login redirect bug"</p><small>2 days ago</small></div></li>
-                            </ul>
                         </article>
                     </div>
                 </section>

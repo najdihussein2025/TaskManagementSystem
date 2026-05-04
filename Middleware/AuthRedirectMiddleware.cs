@@ -28,7 +28,8 @@ namespace TaskManagementSystem.Middleware
                 path.StartsWith("/css") ||
                 path.StartsWith("/js") ||
                 path.StartsWith("/lib") ||
-                path.StartsWith("/images"))
+                path.StartsWith("/images") ||
+                path.StartsWith("/home"))
             {
                 await _next(context);
                 return;
@@ -93,17 +94,16 @@ namespace TaskManagementSystem.Middleware
                 return;
             }
 
-            if (isAdminRoute && role != "Admin")
+            if (isUserRoute && role == "Admin")
             {
-                context.Session.SetString("LoginRequired",
-                    "Access denied. Admin privileges required.");
-                context.Response.Redirect("/Auth/Login");
+                context.Response.Redirect("/Admin/Dashboard");
                 return;
             }
 
-            if (isUserRoute && role != "User")
+            // Role mismatch: User trying to access Admin route
+            if (isAdminRoute && role == "User")
             {
-                context.Response.Redirect("/Admin/Dashboard");
+                context.Response.Redirect("/User/Dashboard");
                 return;
             }
 

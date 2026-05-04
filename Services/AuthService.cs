@@ -37,7 +37,7 @@ namespace TaskManagementSystem.Services
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return (false, null, null, "Invalid email or password.");
 
-            var role = user.RoleId == 2 ? "Admin" : "User";
+            var role = user.RoleId == 4 ? "Admin" : "User";
             var token = GenerateJwtToken(user, role);
 
             return (true, token, role, null);
@@ -85,7 +85,7 @@ namespace TaskManagementSystem.Services
             if (user.Status == UserStatus.Inactive)
                 return (false, null, null, "Account is inactive.");
 
-            var role = user.RoleId == 2 ? "Admin" : "User";
+            var role = user.RoleId == 4 ? "Admin" : "User";
             var token = GenerateJwtToken(user, role);
 
             return (true, token, role, null);
@@ -105,7 +105,7 @@ namespace TaskManagementSystem.Services
                 FullName = dto.FullName,
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                RoleId = 1,
+                RoleId = 3,
                 Status = UserStatus.Active,
                 CreatedAt = DateTime.UtcNow
             };

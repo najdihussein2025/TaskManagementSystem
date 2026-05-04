@@ -33,28 +33,7 @@ namespace TaskManagementSystem.Controllers
                 HttpContext.Session.Remove("LoginRequired");
             }
 
-            // If already logged in redirect away
-            var token = Request.Cookies["jwt"];
-            if (!string.IsNullOrEmpty(token))
-            {
-                try
-                {
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwt = handler.ReadJwtToken(token);
-                    var exp = jwt.ValidTo;
-                    if (exp > DateTime.UtcNow)
-                    {
-                        var role = jwt.Claims
-                            .FirstOrDefault(c => c.Type == "role" ||
-                                                 c.Type == ClaimTypes.Role)
-                            ?.Value;
-                        return role == "Admin"
-                            ? RedirectToAction("Dashboard", "Admin")
-                            : RedirectToAction("Dashboard", "User");
-                    }
-                }
-                catch { }
-            }
+            
 
             if (TempData["LoginError"] is string loginError && !string.IsNullOrWhiteSpace(loginError))
             {
@@ -219,6 +198,7 @@ namespace TaskManagementSystem.Controllers
                 return RedirectToAction("Login");
             }
 
+            /*
             Response.Cookies.Append("jwt", token!, new CookieOptions
             {
                 HttpOnly = true,
@@ -226,6 +206,9 @@ namespace TaskManagementSystem.Controllers
                 SameSite = SameSiteMode.Lax,  // Lax allows cookie on redirects
                 Expires = DateTimeOffset.UtcNow.AddHours(8)
             });
+            */
+
+            
 
             Console.WriteLine($"[GOOGLE] JWT cookie set. Redirecting to {role} dashboard");
 

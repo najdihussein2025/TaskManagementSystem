@@ -39,6 +39,12 @@ public class TaskService : ITaskService
         return tasks.Select(MapToDto);
     }
 
+    public async Task<IEnumerable<TaskDto>> GetTasksByUserIdAsync(int userId)
+    {
+        var tasks = await _taskRepository.GetByUserIdAsync(userId);
+        return tasks.Select(MapToDto);
+    }
+
     public async Task<TaskDto> CreateTaskAsync(CreateTaskDto dto)
     {
         var fallbackUserId = await GetRequiredUserIdAsync();
@@ -121,6 +127,8 @@ public class TaskService : ITaskService
         Priority = task.Priority,
         DueDate = task.DueDate,
         Status = task.Status,
-        CreatedAt = task.CreatedAt
+        CreatedAt = task.CreatedAt,
+        CreatedByUserId = task.CreatedByUserId,  
+        CreatedByName = task.CreatedByUser?.FullName
     };
 }

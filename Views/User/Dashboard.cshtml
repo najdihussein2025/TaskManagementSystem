@@ -1,6 +1,29 @@
+@model IEnumerable<TaskManagementSystem.DTOs.Task.TaskDto>
 @{
     Layout = null;
     ViewData["Title"] = "My Dashboard";
+
+    // Calculate statistics from real data
+    var taskList = Model?.ToList() ?? new List<TaskManagementSystem.DTOs.Task.TaskDto>();
+    var totalTasks = taskList.Count;
+    var completedTasks = taskList.Count(t => t.Status == TaskManagementSystem.Enums.TaskStatus.Completed);
+    var inProgressTasks = taskList.Count(t => t.Status == TaskManagementSystem.Enums.TaskStatus.InProgress);
+    var pendingTasks = taskList.Count(t => t.Status == TaskManagementSystem.Enums.TaskStatus.Pending);
+    var overdueTasks = taskList.Count(t => t.DueDate < DateTime.UtcNow && t.Status != TaskManagementSystem.Enums.TaskStatus.Completed);
+
+    var completedPercent = totalTasks > 0 ? (completedTasks * 100 / totalTasks) : 0;
+    var inProgressPercent = totalTasks > 0 ? (inProgressTasks * 100 / totalTasks) : 0;
+    var pendingPercent = totalTasks > 0 ? (pendingTasks * 100 / totalTasks) : 0;
+    var overduePercent = totalTasks > 0 ? (overdueTasks * 100 / totalTasks) : 0;
+
+    var userName = ViewBag.UserName ?? "User";
+    var userInitials = string.IsNullOrEmpty(userName) ? "U" :
+        (userName.Split(' ').Length > 1 ?
+         $"{userName.Split(' ')[0][0]}{userName.Split(' ')[1][0]}" :
+         userName.Substring(0, 2).ToUpper());
+
+    // Get recent tasks (last 5)
+    var recentTasks = taskList.OrderByDescending(t => t.CreatedAt).Take(5).ToList();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -23,20 +46,35 @@
                 <p class="panel-label sidebar-text">My Workspace</p>
                 <div class="sidebar-divider"></div>
                 <nav class="side-nav" id="sideNav">
-                    <a href="/User/Dashboard" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8" /></svg><span class="sidebar-text">Dashboard</span></a>
-                    <a href="/User/MyTasks" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="sidebar-text">My Tasks</span></a>
-                    <a href="/User/CreateTask" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="sidebar-text">Create Task</span></a>
-                    <a href="/User/Profile" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8" /></svg><span class="sidebar-text">Profile</span></a>
+                    <a href="/User/Dashboard" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm10 8h8V11h-8v10ZM3 21h8v-6H3v6Zm10-10h8V3h-8v8Z" stroke="currentColor" stroke-width="1.8" /></svg>
+                        <span class="sidebar-text">Dashboard</span>
+                    </a>
+                    <a href="/User/MyTasks" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                        <span class="sidebar-text">My Tasks</span>
+                    </a>
+                    <a href="/User/CreateTask" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                        <span class="sidebar-text">Create Task</span>
+                    </a>
+                    <a href="/User/Profile" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm5 13v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1" stroke="currentColor" stroke-width="1.8" /></svg>
+                        <span class="sidebar-text">Profile</span>
+                    </a>
                     <div class="sidebar-divider"></div>
-                    <a href="/Auth/Logout" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="sidebar-text">Logout</span></a>
+                    <a href="/Auth/Logout" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        <span class="sidebar-text">Logout</span>
+                    </a>
                 </nav>
             </div>
             <div class="sidebar-bottom">
                 <div class="profile-card">
-                    <div class="avatar">JD</div>
+                    <div class="avatar">@userInitials</div>
                     <div class="profile-info sidebar-text">
-                        <strong>John Doe</strong>
-                        <span>john@email.com</span>
+                        <strong>@userName</strong>
+                        <span>@User.Identity?.Name</span>
                     </div>
                 </div>
             </div>
@@ -51,19 +89,8 @@
                 </div>
                 <div class="topbar-actions">
                     <button class="hamburger-btn" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button>
-                    <div class="search-wrap"><input type="text" placeholder="Search tasks..." /></div>
                     <div class="dropdown-wrap">
-                        <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications">
-                            <svg viewBox="0 0 24 24" fill="none"><path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 1 1-6 0h6Z" stroke="currentColor" stroke-width="1.8" /></svg>
-                            <span class="dot-badge">2</span>
-                        </button>
-                        <div class="dropdown-menu" id="notifMenu">
-                            <p>Deadline reminder: Design login page.</p>
-                            <p>New update on JWT auth task.</p>
-                        </div>
-                    </div>
-                    <div class="dropdown-wrap">
-                        <button class="avatar-btn" id="avatarBtn" type="button">JD</button>
+                        <button class="avatar-btn" id="avatarBtn" type="button">@userInitials</button>
                         <div class="dropdown-menu profile-menu" id="profileMenu">
                             <a href="/User/Profile">My Profile</a>
                             <a href="/Auth/Logout">Logout</a>
@@ -73,56 +100,91 @@
             </header>
 
             <div class="page-content">
+                <!-- Stats Cards with Real Data -->
                 <section class="stats-grid">
                     <article class="card stat-card">
                         <div class="stat-top"><span>My Tasks</span></div>
-                        <h3 data-counter="23">0</h3>
-                        <div class="progress"><span style="width:70%; background:#3b82f6;"></span></div>
+                        <h3>@totalTasks</h3>
+                        <div class="progress"><span style="width:100%; background:#3b82f6;"></span></div>
                         <small>Total assigned to you</small>
                     </article>
                     <article class="card stat-card">
                         <div class="stat-top"><span>Completed</span></div>
-                        <h3 data-counter="14">0</h3>
-                        <div class="progress"><span style="width:60%; background:#22c55e;"></span></div>
-                        <small>Tasks finished</small>
+                        <h3>@completedTasks</h3>
+                        <div class="progress"><span style="width:@completedPercent%; background:#22c55e;"></span></div>
+                        <small>@completedPercent% of total</small>
                     </article>
                     <article class="card stat-card">
                         <div class="stat-top"><span>In Progress</span></div>
-                        <h3 data-counter="6">0</h3>
-                        <div class="progress"><span style="width:35%; background:#f59e0b;"></span></div>
+                        <h3>@inProgressTasks</h3>
+                        <div class="progress"><span style="width:@inProgressPercent%; background:#f59e0b;"></span></div>
                         <small>Currently working on</small>
                     </article>
                     <article class="card stat-card">
                         <div class="stat-top"><span>Overdue</span></div>
-                        <h3 data-counter="3">0</h3>
-                        <div class="progress"><span style="width:15%; background:#ef4444;"></span></div>
+                        <h3>@overdueTasks</h3>
+                        <div class="progress"><span style="width:@Math.Min(overduePercent, 100)%; background:#ef4444;"></span></div>
                         <small>Needs your attention</small>
                     </article>
                 </section>
 
+                <!-- Tasks by Status Bars -->
                 <section class="content-grid">
                     <article class="card">
                         <h2>My Tasks by Status</h2>
                         <div class="status-bars">
-                            <div class="bar-row"><span>Pending</span><div class="bar-track"><div class="bar-fill blue" data-width="26.1%"></div></div><strong>6</strong></div>
-                            <div class="bar-row"><span>In Progress</span><div class="bar-track"><div class="bar-fill amber" data-width="26.1%"></div></div><strong>6</strong></div>
-                            <div class="bar-row"><span>Completed</span><div class="bar-track"><div class="bar-fill green" data-width="60.9%"></div></div><strong>14</strong></div>
-                            <div class="bar-row"><span>Overdue</span><div class="bar-track"><div class="bar-fill red" data-width="13.0%"></div></div><strong>3</strong></div>
+                            <div class="bar-row">
+                                <span>Pending</span>
+                                <div class="bar-track"><div class="bar-fill blue" style="width:@pendingPercent%"></div></div>
+                                <strong>@pendingTasks</strong>
+                            </div>
+                            <div class="bar-row">
+                                <span>In Progress</span>
+                                <div class="bar-track"><div class="bar-fill amber" style="width:@inProgressPercent%"></div></div>
+                                <strong>@inProgressTasks</strong>
+                            </div>
+                            <div class="bar-row">
+                                <span>Completed</span>
+                                <div class="bar-track"><div class="bar-fill green" style="width:@completedPercent%"></div></div>
+                                <strong>@completedTasks</strong>
+                            </div>
+                            <div class="bar-row">
+                                <span>Overdue</span>
+                                <div class="bar-track"><div class="bar-fill red" style="width:@Math.Min(overduePercent, 100)%"></div></div>
+                                <strong>@overdueTasks</strong>
+                            </div>
                         </div>
                     </article>
 
+                    <!-- Upcoming Deadlines -->
                     <article class="card">
                         <h2>Upcoming Deadlines</h2>
                         <ul class="deadline-list">
-                            <li><span class="priority-dot red"></span><strong>Design login page</strong><span class="muted">Apr 30</span><span class="status in-progress">In Progress</span></li>
-                            <li><span class="priority-dot red"></span><strong>Implement JWT auth</strong><span class="muted">May 5</span><span class="status pending">Pending</span></li>
-                            <li><span class="priority-dot amber"></span><strong>Connect frontend to API</strong><span class="muted">May 8</span><span class="status pending">Pending</span></li>
-                            <li><span class="priority-dot amber"></span><strong>Task filter feature</strong><span class="muted">May 9</span><span class="status pending">Pending</span></li>
-                            <li><span class="priority-dot green"></span><strong>Style dashboard page</strong><span class="muted">May 1</span><span class="status in-progress">In Progress</span></li>
+                            @if (taskList.Where(t => t.DueDate.HasValue && t.Status != TaskManagementSystem.Enums.TaskStatus.Completed).OrderBy(t => t.DueDate).Take(5).Any())
+                            {
+                                foreach (var task in taskList.Where(t => t.DueDate.HasValue && t.Status != TaskManagementSystem.Enums.TaskStatus.Completed).OrderBy(t => t.DueDate).Take(5))
+                                {
+                                    var daysUntilDue = (task.DueDate.Value - DateTime.UtcNow).Days;
+                                    var priorityClass = task.Priority.ToString().ToLower();
+                                    <li>
+                                        <span class="priority-dot @priorityClass"></span>
+                                        <strong>@task.Title</strong>
+                                        <span class="muted">Due @task.DueDate.Value.ToString("MMM dd")</span>
+                                        <span class="status @(daysUntilDue < 0 ? "overdue" : task.Status.ToString().ToLower().Replace(" ", ""))">
+                                            @(daysUntilDue < 0 ? "Overdue" : task.Status)
+                                        </span>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li>No upcoming deadlines. Great job!</li>
+                            }
                         </ul>
                     </article>
                 </section>
 
+                <!-- Recent Tasks Table -->
                 <section class="card table-card">
                     <div class="card-title-row">
                         <h2>My Recent Tasks</h2>
@@ -131,14 +193,36 @@
                     <div class="table-wrap">
                         <table>
                             <thead>
-                                <tr><th>Task Name</th><th>Category</th><th>Priority</th><th>Due Date</th><th>Status</th></tr>
+                                <tr>
+                                    <th>Task Name</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
                             </thead>
                             <tbody>
-                                <tr><td>Design login page</td><td><span class="pill design">Design</span></td><td><span class="pill high">High</span></td><td>Apr 30</td><td><span class="status in-progress">In Progress</span></td></tr>
-                                <tr><td>Implement JWT auth</td><td><span class="pill backend">Backend</span></td><td><span class="pill high">High</span></td><td>May 5</td><td><span class="status pending">Pending</span></td></tr>
-                                <tr><td>Connect frontend to API</td><td><span class="pill frontend">Frontend</span></td><td><span class="pill low">Low</span></td><td>May 8</td><td><span class="status pending">Pending</span></td></tr>
-                                <tr><td>Task filter feature</td><td><span class="pill frontend">Frontend</span></td><td><span class="pill low">Low</span></td><td>May 9</td><td><span class="status pending">Pending</span></td></tr>
-                                <tr><td>Style dashboard page</td><td><span class="pill design">Design</span></td><td><span class="pill high">High</span></td><td>May 1</td><td><span class="status in-progress">In Progress</span></td></tr>
+                                @if (recentTasks.Any())
+                                {
+                                    foreach (var task in recentTasks)
+                                    {
+                                        var priorityClass = task.Priority.ToString().ToLower();
+                                        var statusClass = task.Status.ToString().ToLower().Replace(" ", "");
+                                        <tr>
+                                            <td>@task.Title</td>
+                                            <td><span class="pill">@(task.CategoryName ?? "Uncategorized")</span></td>
+                                            <td><span class="pill @priorityClass">@task.Priority</span></td>
+                                            <td>@(task.DueDate?.ToString("MMM dd") ?? "No date")</td>
+                                            <td><span class="status @statusClass">@task.Status</span></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;">No tasks assigned to you yet.</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -147,6 +231,15 @@
         </section>
     </div>
 
+    <script>
+        // Display today's date
+        document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    </script>
     <script src="~/js/User/user-layout.js" asp-append-version="true"></script>
     <script src="~/js/User/dashboard.js" asp-append-version="true"></script>
 </body>

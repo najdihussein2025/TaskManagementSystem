@@ -16,4 +16,6 @@ public class TaskDto
     public DateTime? DueDate { get; set; }
     public TaskStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+    public int CreatedByUserId { get; set; }    
+    public string? CreatedByName { get; set; }
 }

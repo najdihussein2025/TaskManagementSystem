@@ -1,0 +1,78 @@
+﻿@model TaskManagementSystem.DTOs.Task.TaskDto
+@{
+    Layout = null;
+    ViewData["Title"] = "Task Details";
+
+    var userName = ViewBag.UserName ?? "User";
+    var userInitials = string.IsNullOrEmpty(userName) ? "U" :
+        (userName.Split(' ').Length > 1 ?
+         $"{userName.Split(' ')[0][0]}{userName.Split(' ')[1][0]}" :
+         userName.Substring(0, 2).ToUpper());
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TaskFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/User/user-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/User/mytasks.css" asp-append-version="true" />
+</head>
+<body class="user-body">
+    <div class="user-wrapper">
+        <!-- Sidebar logic remains identical to Dashboard/MyTasks for consistency -->
+        <aside class="user-sidebar">
+            <div class="sidebar-top">
+                <a class="brand" href="/User/Dashboard"><span class="brand-icon">✓</span><span class="brand-text sidebar-text">TaskFlow</span></a>
+                <nav class="side-nav">
+                    <a href="/User/Dashboard" class="nav-item"><span class="sidebar-text">Dashboard</span></a>
+                    <a href="/User/MyTasks" class="nav-item active"><span class="sidebar-text">My Tasks</span></a>
+                    <a href="/User/CreateTask" class="nav-item"><span class="sidebar-text">Create Task</span></a>
+                    <a href="/User/Profile" class="nav-item"><span class="sidebar-text">Profile</span></a>
+                </nav>
+            </div>
+        </aside>
+
+        <section class="user-main">
+            <header class="topbar">
+                <h1>Task Information</h1>
+            </header>
+
+            <div class="page-content">
+                <article class="card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                        <span class="status @Model.Status.ToString().ToLower()">@Model.Status</span>
+                        <span class="pill @Model.Priority.ToString().ToLower()">@Model.Priority Priority</span>
+                    </div>
+
+                    <h2 style="font-size: 2rem; margin-bottom: 1rem;">@Model.Title</h2>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; color: #64748b;">
+                        <div><strong>Category:</strong> @(Model.CategoryName ?? "Uncategorized")</div>
+                        <div><strong>Due Date:</strong> @(Model.DueDate?.ToString("MMM dd, yyyy") ?? "No deadline")</div>
+                        <div><strong>Assigned By:</strong> @Model.CreatedByName</div>
+                        <div><strong>Task ID:</strong> #@Model.Id</div>
+                    </div>
+
+                    <div style="border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Description</h4>
+                        <p style="line-height: 1.6; white-space: pre-wrap;">@Model.Description</p>
+                    </div>
+
+                    <div style="margin-top: 3rem; display: flex; gap: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                        <a href="/User/MyTasks" class="btn-ghost">← Back to List</a>
+                        <a href="/User/EditTask/@Model.Id" class="btn-primary">Edit Task</a>
+
+                        <!-- Form for deletion if user is the creator -->
+                        <form asp-action="DeleteTask" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-ghost" style="color: #ef4444;">Delete Task</button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

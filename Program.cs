@@ -23,9 +23,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAuthentication(options =>
 {
     // Cookie must be default for Google OAuth correlation to work
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = "JwtBearer";
+    options.DefaultChallengeScheme = "JwtBearer";
+    options.DefaultScheme = "JwtBearer";
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 {
@@ -87,13 +87,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.DefaultPolicy = new Microsoft.AspNetCore.Authorization
-        .AuthorizationPolicyBuilder("JwtBearer")
-        .RequireAuthenticatedUser()
-        .Build();
-});
+builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
@@ -113,12 +107,16 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 builder.Services.AddScoped<ISettingsService, SettingsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
+// builder.Services.AddScoped<IEmailService, EmailService>();
+// builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 
 var app = builder.Build();
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    DbInitializer.Initialize(dbContext);
+}
 
 if (!app.Environment.IsDevelopment())
 {
