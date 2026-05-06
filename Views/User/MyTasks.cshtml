@@ -88,6 +88,12 @@
                         @TempData["Success"]
                     </div>
                 }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-error" style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; padding:10px; border-radius:8px; margin-bottom:15px; color:#ef4444;">
+                        @TempData["Error"]
+                    </div>
+                }
 
                 <section class="page-head">
                     <div>

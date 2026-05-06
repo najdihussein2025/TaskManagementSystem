@@ -40,6 +40,12 @@ namespace TaskManagementSystem.Controllers
             var (success, error) = await _forgotPasswordService
                 .SendOtpAsync(dto.Email);
 
+            if (!success)
+            {
+                ViewBag.Error = error ?? "Could not send reset code. Please try again.";
+                return View(dto);
+            }
+
             // Save email in session — unlocks VerifyOtp page
             HttpContext.Session.SetString("ResetEmail", dto.Email);
             HttpContext.Session.Remove("OtpVerified");

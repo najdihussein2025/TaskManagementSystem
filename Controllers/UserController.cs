@@ -346,10 +346,10 @@ public class UserController : Controller
             return RedirectToAction(nameof(MyTasks));
         }
 
-        // Only allow deletion if user created the task
-        if (task.CreatedByUserId != userId.Value)
+        // Allow deletion if user created OR is assigned to the task
+        if (task.CreatedByUserId != userId.Value && task.AssignedToUserId != userId.Value)
         {
-            TempData["Error"] = "You can only delete tasks you created.";
+            TempData["Error"] = "You don't have permission to delete this task.";
             return RedirectToAction(nameof(MyTasks));
         }
 

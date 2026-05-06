@@ -37,7 +37,10 @@ namespace TaskManagementSystem.Services
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return (false, null, null, "Invalid email or password.");
 
-            var role = user.RoleId == 4 ? "Admin" : "User";
+            var role = await _context.Roles
+                .Where(r => r.Id == user.RoleId)
+                .Select(r => r.Name)
+                .FirstOrDefaultAsync() ?? "User";
             var token = GenerateJwtToken(user, role);
 
             return (true, token, role, null);
@@ -67,13 +70,21 @@ namespace TaskManagementSystem.Services
             // If still not found - auto-register new user
             if (user == null)
             {
+                var userRoleId = await _context.Roles
+                    .Where(r => r.Name == "User")
+                    .Select(r => r.Id)
+                    .FirstOrDefaultAsync();
+
+                if (userRoleId == 0)
+                    return (false, null, null, "Roles are not initialized. Contact admin.");
+
                 user = new ApplicationUser
                 {
                     FullName = fullName,
                     Email = email,
                     GoogleId = googleId,
                     PasswordHash = string.Empty, // no password for Google users
-                    RoleId = 1, // default role = User
+                    RoleId = userRoleId, // default role = User
                     Status = UserStatus.Active, // active
                     CreatedAt = DateTime.UtcNow
                 };
@@ -85,7 +96,10 @@ namespace TaskManagementSystem.Services
             if (user.Status == UserStatus.Inactive)
                 return (false, null, null, "Account is inactive.");
 
-            var role = user.RoleId == 4 ? "Admin" : "User";
+            var role = await _context.Roles
+                .Where(r => r.Id == user.RoleId)
+                .Select(r => r.Name)
+                .FirstOrDefaultAsync() ?? "User";
             var token = GenerateJwtToken(user, role);
 
             return (true, token, role, null);
@@ -100,12 +114,20 @@ namespace TaskManagementSystem.Services
             if (exists)
                 return (false, "Email already registered.");
 
+            var userRoleId = await _context.Roles
+                .Where(r => r.Name == "User")
+                .Select(r => r.Id)
+                .FirstOrDefaultAsync();
+
+            if (userRoleId == 0)
+                return (false, "Roles are not initialized. Contact admin.");
+
             var user = new ApplicationUser
             {
                 FullName = dto.FullName,
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                RoleId = 3,
+                RoleId = userRoleId,
                 Status = UserStatus.Active,
                 CreatedAt = DateTime.UtcNow
             };

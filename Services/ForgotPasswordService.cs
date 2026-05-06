@@ -52,8 +52,18 @@ namespace TaskManagementSystem.Services
             await _context.SaveChangesAsync();
 
             // Send email
-            await _emailService.SendOtpEmailAsync(
-                user.Email, user.FullName, otp);
+            try
+            {
+                await _emailService.SendOtpEmailAsync(
+                    user.Email, user.FullName, otp);
+            }
+            catch (Exception ex)
+            {
+                token.IsUsed = true;
+                await _context.SaveChangesAsync();
+                Console.WriteLine($"[EMAIL] Failed sending OTP to {email}: {ex.Message}");
+                return (false, "Could not send reset code. Please try again.");
+            }
 
             Console.WriteLine($"[OTP] Generated {otp} for {email}");
             return (true, null);

@@ -23,13 +23,16 @@ namespace TaskManagementSystem.Services
             var from = _config["Email:From"]!;
             var fromName = _config["Email:FromName"]!;
 
-            var smtpClient = new SmtpClient(host, port)
+            var enableSsl = port != 2525;
+
+            using var smtpClient = new SmtpClient(host, port)
             {
                 Credentials = new NetworkCredential(username, password),
-                EnableSsl = true
+                EnableSsl = enableSsl,
+                Timeout = 10000
             };
 
-            var message = new MailMessage
+            using var message = new MailMessage
             {
                 From = new MailAddress(from, fromName),
                 Subject = "TaskFlow — Your Password Reset Code",
@@ -74,7 +77,12 @@ namespace TaskManagementSystem.Services
 
             message.To.Add(new MailAddress(toEmail, toName));
 
-            await smtpClient.SendMailAsync(message);
+            var sendTask = smtpClient.SendMailAsync(message);
+            var completed = await Task.WhenAny(sendTask, Task.Delay(12000));
+            if (completed != sendTask)
+                throw new TimeoutException("SMTP send timed out.");
+
+            await sendTask;
             Console.WriteLine($"[EMAIL] OTP sent to {toEmail}");
         }
     }
