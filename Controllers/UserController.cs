@@ -51,7 +51,6 @@ public class UserController : Controller
         return User.GetUserId();
     }
 
-    // GET: /User/Dashboard
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
@@ -64,7 +63,6 @@ public class UserController : Controller
         return View(tasks);
     }
 
-    // GET: /User/MyTasks
     [HttpGet]
     public async Task<IActionResult> MyTasks(string? search, string? status, string? priority, int? categoryId)
     {
@@ -91,7 +89,6 @@ public class UserController : Controller
         return View(tasks);
     }
 
-    // GET: /User/CreateTask
     [HttpGet]
     public async Task<IActionResult> CreateTask()
     {
@@ -106,7 +103,6 @@ public class UserController : Controller
         return View();
     }
 
-    // POST: /User/CreateTask
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateTask(CreateTaskDto dto)
@@ -123,7 +119,6 @@ public class UserController : Controller
             return View(dto);
         }
 
-        // Set the current user as the creator and assignee
         if (dto.AssignedToUserId == null || dto.AssignedToUserId == 0)
         {
             dto.AssignedToUserId = userId.Value;
@@ -134,7 +129,6 @@ public class UserController : Controller
         return RedirectToAction(nameof(MyTasks));
     }
 
-    // GET: /User/EditTask/{id}
     [HttpGet]
     public async Task<IActionResult> EditTask(int id)
     {
@@ -174,7 +168,6 @@ public class UserController : Controller
         return View(updateDto);
     }
 
-    // POST: /User/EditTask/{id}
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditTask(int id, UpdateTaskDto dto)
@@ -203,7 +196,6 @@ public class UserController : Controller
         return RedirectToAction(nameof(MyTasks));
     }
 
-    // POST: /User/UpdateTaskStatus
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateTaskStatus(int taskId, string status)
@@ -218,7 +210,6 @@ public class UserController : Controller
             return RedirectToAction(nameof(MyTasks));
         }
 
-        // Verify the task belongs to the current user
         if (task.AssignedToUserId != userId.Value)
         {
             TempData["Error"] = "You don't have permission to update this task.";
@@ -250,7 +241,6 @@ public class UserController : Controller
         return RedirectToAction(nameof(MyTasks));
     }
 
-    // GET: /User/TaskDetails/{id}
     [HttpGet]
     public async Task<IActionResult> TaskDetails(int id)
     {
@@ -308,7 +298,6 @@ public class UserController : Controller
         var userId = GetCurrentUserId();
         if (userId == null) return RedirectToAction("Login", "Auth");
 
-        // Get the current user from database to preserve their status
         var currentUser = await _userService.GetByIdAsync(userId.Value);
         if (currentUser == null)
         {
@@ -316,13 +305,13 @@ public class UserController : Controller
             return RedirectToAction(nameof(Profile));
         }
 
-        // Create update DTO with preserved status (don't change it)
+
         var updateDto = new UpdateUserDto
         {
             Id = userId.Value,
             FullName = dto.FullName,
             Email = dto.Email,
-            Status = UserStatus.Active  // Always keep as Active since they're logged in
+            Status = UserStatus.Active  
         };
 
         await _userService.UpdateAsync(updateDto);
@@ -331,7 +320,6 @@ public class UserController : Controller
         return RedirectToAction(nameof(Profile));
     }
 
-    // POST: /User/DeleteTask/{id}
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteTask(int id)
@@ -346,7 +334,6 @@ public class UserController : Controller
             return RedirectToAction(nameof(MyTasks));
         }
 
-        // Allow deletion if user created OR is assigned to the task
         if (task.CreatedByUserId != userId.Value && task.AssignedToUserId != userId.Value)
         {
             TempData["Error"] = "You don't have permission to delete this task.";
@@ -359,7 +346,6 @@ public class UserController : Controller
         return RedirectToAction(nameof(MyTasks));
     }
 
-    // POST: /User/Logout
     [HttpPost]
     public IActionResult Logout()
     {
@@ -367,7 +353,6 @@ public class UserController : Controller
         return RedirectToAction("Login", "Auth");
     }
 
-    // POST: /User/ChangePassword
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)

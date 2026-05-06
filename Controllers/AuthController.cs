@@ -218,41 +218,5 @@ namespace TaskManagementSystem.Controllers
         }
 
 
-        [HttpPost("api/auth/login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> LoginApi([FromBody] LoginDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new { error = "Invalid input." });
-
-            var (success, token, role, error) = await _authService.LoginAsync(dto);
-
-            if (!success)
-                return Unauthorized(new { error });
-
-            return Ok(new { token, role });
-        }
-
-        [HttpPost("api/auth/register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> RegisterApi([FromBody] RegisterDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new { error = "Invalid input." });
-
-            var (success, error) = await _authService.RegisterAsync(dto);
-
-            if (!success)
-                return BadRequest(new { error });
-
-            return Ok(new { message = "Account created successfully." });
-        }
-
-        [HttpPost("api/auth/logout")]
-        [AllowAnonymous]
-        public IActionResult LogoutApi()
-        {
-            return Ok(new { message = "Logged out." });
-        }
     }
 }

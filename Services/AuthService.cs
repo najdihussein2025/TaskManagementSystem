@@ -83,9 +83,9 @@ namespace TaskManagementSystem.Services
                     FullName = fullName,
                     Email = email,
                     GoogleId = googleId,
-                    PasswordHash = string.Empty, // no password for Google users
+                    PasswordHash = string.Empty, 
                     RoleId = userRoleId, // default role = User
-                    Status = UserStatus.Active, // active
+                    Status = UserStatus.Active, 
                     CreatedAt = DateTime.UtcNow
                 };
 

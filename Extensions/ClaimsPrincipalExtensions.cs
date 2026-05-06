@@ -2,12 +2,9 @@ using System.Security.Claims;
 
 namespace TaskManagementSystem.Extensions;
 
-/// <summary>
-/// Current user from JWT claims (<see cref="ClaimTypes"/>). No session required.
-/// </summary>
+
 public static class ClaimsPrincipalExtensions
 {
-    /// <summary>Numeric user id from <see cref="ClaimTypes.NameIdentifier"/>.</summary>
     public static int? GetUserId(this ClaimsPrincipal user)
     {
         var v = user.FindFirstValue(ClaimTypes.NameIdentifier);

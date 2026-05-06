@@ -24,12 +24,9 @@ namespace TaskManagementSystem.Services
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
 
-            // Always return success even if email not found
-            // Prevents email enumeration attacks
             if (user == null)
                 return (true, null);
 
-            // Invalidate any existing unused tokens for this user
             var existing = await _context.PasswordResetTokens
                 .Where(t => t.UserId == user.Id && !t.IsUsed)
                 .ToListAsync();
@@ -116,10 +113,8 @@ namespace TaskManagementSystem.Services
             if (token == null)
                 return (false, "Invalid or expired code.");
 
-            // Update password
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
 
-            // Mark token as used
             token.IsUsed = true;
 
             await _context.SaveChangesAsync();
