@@ -25,7 +25,6 @@ namespace TaskManagementSystem.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            // Read redirect message from session
             var msg = HttpContext.Session.GetString("LoginRequired");
             if (!string.IsNullOrEmpty(msg))
             {
@@ -66,7 +65,7 @@ namespace TaskManagementSystem.Controllers
             {
                 HttpOnly = true,
                 Secure = false,
-                SameSite = SameSiteMode.Lax,  // change here too
+                SameSite = SameSiteMode.Lax,  
                 Expires = DateTimeOffset.UtcNow.AddHours(8)
             });
 
@@ -105,8 +104,6 @@ namespace TaskManagementSystem.Controllers
         [HttpGet]
         [AllowAnonymous]
         public IActionResult AccessDenied() => View();
-
-        // Step 1: User clicks Google button -> challenge Google
         [HttpGet]
         [Route("auth/google-login")]
         public IActionResult GoogleLogin()
@@ -129,16 +126,12 @@ namespace TaskManagementSystem.Controllers
         {
             Console.WriteLine("[GOOGLE] GoogleCallback triggered");
 
-
-            // Try authenticating with the external cookie scheme
-            // Google uses "Google" scheme which stores in external cookie
             var result = await HttpContext.AuthenticateAsync("Google");
 
             Console.WriteLine($"[GOOGLE] Google scheme result: {result.Succeeded}");
 
             if (!result.Succeeded)
             {
-                // Try with the Cookies scheme as fallback
                 result = await HttpContext.AuthenticateAsync(
                     Microsoft.AspNetCore.Authentication.Cookies
                               .CookieAuthenticationDefaults.AuthenticationScheme);
@@ -147,8 +140,7 @@ namespace TaskManagementSystem.Controllers
 
             if (!result.Succeeded)
             {
-                // Try reading directly from HttpContext.User
-                // set by the Google middleware automatically
+
                 Console.WriteLine("[GOOGLE] Trying HttpContext.User claims...");
                 
                 if (HttpContext.User?.Identity?.IsAuthenticated == true)
@@ -197,18 +189,7 @@ namespace TaskManagementSystem.Controllers
                 TempData["LoginError"] = error;
                 return RedirectToAction("Login");
             }
-
-            /*
-            Response.Cookies.Append("jwt", token!, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,  // Lax allows cookie on redirects
-                Expires = DateTimeOffset.UtcNow.AddHours(8)
-            });
-            */
-
-            
+     
 
             Console.WriteLine($"[GOOGLE] JWT cookie set. Redirecting to {role} dashboard");
 
@@ -236,7 +217,6 @@ namespace TaskManagementSystem.Controllers
             return RedirectToAction(nameof(Login), "Auth");
         }
 
-        // ── API endpoints (return JSON) ───────────────────────────
 
         [HttpPost("api/auth/login")]
         [AllowAnonymous]
@@ -272,7 +252,6 @@ namespace TaskManagementSystem.Controllers
         [AllowAnonymous]
         public IActionResult LogoutApi()
         {
-            // JWT is stateless — client deletes the token
             return Ok(new { message = "Logged out." });
         }
     }
