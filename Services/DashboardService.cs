@@ -21,8 +21,9 @@ namespace TaskManagementSystem.Services
             var now = DateTime.UtcNow;
             var monthStart = new DateTime(now.Year, now.Month, 1);
 
-            var totalUsers = await _context.Users.CountAsync();
-            var newUsersThisMonth = await _context.Users.CountAsync(u => u.CreatedAt >= monthStart);
+            var totalUsers = await _context.Users.CountAsync(u => u.Role.Name != "Admin");
+            var newUsersThisMonth = await _context.Users.CountAsync(u =>
+                u.CreatedAt >= monthStart && u.Role.Name != "Admin");
             var totalTasks = await _context.Tasks.CountAsync();
             var newTasksThisMonth = await _context.Tasks.CountAsync(t => t.CreatedAt >= monthStart);
             var inProgressTasks = await _context.Tasks.CountAsync(t => t.Status == TaskStatusEnum.InProgress);

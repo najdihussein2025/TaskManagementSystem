@@ -213,7 +213,7 @@ public class AdminController : Controller
 
     private async Task SetSidebarCountsAsync()
     {
-        ViewBag.SidebarUserCount = await _context.Users.CountAsync();
+        ViewBag.SidebarUserCount = await _context.Users.CountAsync(u => u.Role.Name != "Admin");
         ViewBag.SidebarTaskCount = await _context.Tasks.CountAsync();
         ViewBag.SidebarCategoryCount = await _context.Categories.CountAsync();
     }
