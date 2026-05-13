@@ -189,7 +189,18 @@ namespace TaskManagementSystem.Controllers
                 TempData["LoginError"] = error;
                 return RedirectToAction("Login");
             }
-     
+
+            // otherwise AuthRedirectMiddleware will bounce the user back to /Auth/Login.
+            Response.Cookies.Append("jwt", token!, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddHours(8)
+            });
+
+            // through the OAuth handshake;we don't need it anymore.
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             Console.WriteLine($"[GOOGLE] JWT cookie set. Redirecting to {role} dashboard");
 
