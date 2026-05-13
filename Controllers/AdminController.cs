@@ -58,14 +58,28 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateUser(CreateUserDto dto)
     {
-        await _userService.CreateAsync(dto);
+        var (success, error) = await _userService.CreateAsync(dto);
+        if (!success)
+        {
+            TempData["Error"] = error;
+            return RedirectToAction(nameof(Users));
+        }
+
+        TempData["Success"] = "User created successfully.";
         return RedirectToAction(nameof(Users));
     }
 
     [HttpPost]
     public async Task<IActionResult> UpdateUser(UpdateUserDto dto)
     {
-        await _userService.UpdateAsync(dto);
+        var (success, error) = await _userService.UpdateAsync(dto);
+        if (!success)
+        {
+            TempData["Error"] = error;
+            return RedirectToAction(nameof(Users));
+        }
+
+        TempData["Success"] = "User updated successfully.";
         return RedirectToAction(nameof(Users));
     }
 

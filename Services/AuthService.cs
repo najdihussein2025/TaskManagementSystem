@@ -25,8 +25,9 @@ namespace TaskManagementSystem.Services
         public async Task<(bool Success, string? Token, string? Role, string? Error)>
             LoginAsync(LoginDto dto)
         {
+            var loginEmail = dto.Email.Trim();
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == dto.Email);
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == loginEmail.ToLower());
 
             if (user == null)
                 return (false, null, null, "Invalid email or password.");
@@ -108,8 +109,9 @@ namespace TaskManagementSystem.Services
         public async Task<(bool Success, string? Error)>
             RegisterAsync(RegisterDto dto)
         {
+            var email = dto.Email.Trim();
             var exists = await _context.Users
-                .AnyAsync(u => u.Email == dto.Email);
+                .AnyAsync(u => u.Email.ToLower() == email.ToLower());
 
             if (exists)
                 return (false, "Email already registered.");
@@ -125,7 +127,7 @@ namespace TaskManagementSystem.Services
             var user = new ApplicationUser
             {
                 FullName = dto.FullName,
-                Email = dto.Email,
+                Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 RoleId = userRoleId,
                 Status = UserStatus.Active,

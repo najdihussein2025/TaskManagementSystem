@@ -31,6 +31,19 @@ namespace TaskManagementSystem.Repositories
                 .FirstOrDefaultAsync(user => user.Email == email);
         }
 
+        public async Task<bool> EmailExistsAsync(string email, int? excludeUserId = null)
+        {
+            var normalized = email?.Trim() ?? string.Empty;
+            var query = string.IsNullOrEmpty(normalized)
+                ? _context.Users.Where(user => user.Email == string.Empty)
+                : _context.Users.Where(user => user.Email.ToLower() == normalized.ToLower());
+
+            if (excludeUserId.HasValue)
+                query = query.Where(user => user.Id != excludeUserId.Value);
+
+            return await query.AnyAsync();
+        }
+
         public async Task AddAsync(ApplicationUser user)
         {
             await _context.Users.AddAsync(user);

@@ -15,8 +15,15 @@ namespace TaskManagementSystem.Services
             _userRepository = userRepository;
         }
 
-        public async Task CreateAsync(CreateUserDto dto)
+        public async Task<(bool Success, string? Error)> CreateAsync(CreateUserDto dto)
         {
+            var email = dto.Email?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(email))
+                return (false, "Email is required.");
+
+            if (await _userRepository.EmailExistsAsync(email))
+                return (false, "This email is already registered.");
+
             var roleName = string.IsNullOrWhiteSpace(dto.RoleName) ? "User" : dto.RoleName;
             var role = await _userRepository.GetRoleByNameAsync(roleName);
 
@@ -29,7 +36,7 @@ namespace TaskManagementSystem.Services
             var user = new ApplicationUser
             {
                 FullName = dto.FullName ?? string.Empty,
-                Email = dto.Email ?? string.Empty,
+                Email = email,
                 PasswordHash = dto.Password ?? string.Empty,
                 Status = dto.Status,
                 CreatedAt = DateTime.UtcNow,
@@ -37,6 +44,7 @@ namespace TaskManagementSystem.Services
             };
 
             await _userRepository.AddAsync(user);
+            return (true, null);
         }
 
         public async Task<List<UserDto>> GetAllAsync(string? search = null, string? status = null)
@@ -89,15 +97,22 @@ namespace TaskManagementSystem.Services
             };
         }
 
-        public async Task UpdateAsync(UpdateUserDto dto)
+        public async Task<(bool Success, string? Error)> UpdateAsync(UpdateUserDto dto)
         {
             var user = await _userRepository.GetByIdAsync(dto.Id);
-            if (user is null) return;
+            if (user is null)
+                return (false, "User not found.");
+
+            var newEmail = dto.Email?.Trim() ?? user.Email;
+            if (!string.Equals(newEmail, user.Email, StringComparison.Ordinal)
+                && await _userRepository.EmailExistsAsync(newEmail, dto.Id))
+                return (false, "This email is already in use.");
 
             user.FullName = dto.FullName ?? user.FullName;
-            user.Email = dto.Email ?? user.Email;
+            user.Email = newEmail;
             user.Status = dto.Status;
             await _userRepository.UpdateAsync(user);
+            return (true, null);
         }
 
         public async Task DeleteAsync(int id)

@@ -27,6 +27,10 @@ namespace TaskManagementSystem.Data
                 .HasForeignKey(user => user.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<ApplicationUser>()
+                .HasIndex(user => user.Email)
+                .IsUnique();
+
             modelBuilder.Entity<TaskItem>()
                 .HasOne(task => task.Category)
                 .WithMany(category => category.Tasks)

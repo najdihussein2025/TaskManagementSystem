@@ -323,7 +323,12 @@ public class UserController : Controller
             Status = UserStatus.Active  
         };
 
-        await _userService.UpdateAsync(updateDto);
+        var (success, error) = await _userService.UpdateAsync(updateDto);
+        if (!success)
+        {
+            TempData["Error"] = error;
+            return RedirectToAction(nameof(Profile));
+        }
 
         TempData["Success"] = "Profile updated successfully!";
         return RedirectToAction(nameof(Profile));
