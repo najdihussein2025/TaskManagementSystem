@@ -115,7 +115,16 @@ public class UserController : Controller
         {
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories;
-            TempData["Error"] = "Please fill in all required fields.";
+
+            var firstError = ModelState
+                .Where(kv => kv.Value?.Errors.Count > 0)
+                .Select(kv => kv.Value!.Errors[0].ErrorMessage)
+                .FirstOrDefault(m => !string.IsNullOrWhiteSpace(m));
+
+            TempData["Error"] = string.IsNullOrWhiteSpace(firstError)
+                ? "Please fill in all required fields."
+                : firstError;
+
             return View(dto);
         }
 
