@@ -1,0 +1,2 @@
+# Razor views are counted as HTML by GitHub's language stats; leave them out so the repo shows as C#
+*.cshtml linguist-detectable=false
